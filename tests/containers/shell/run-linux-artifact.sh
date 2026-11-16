@@ -6,7 +6,8 @@ set -euo pipefail
 library="$1"
 shift
 
-src_dir="/mnt/c/Users/Think/.agents/skills/local-connector-db/bin/${library}-linux-x64"
+repo_root="${LCDB_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)}"
+src_dir="$repo_root/bin/${library}-linux-x64"
 dst_dir="$HOME/lcdb-test/${library}"
 
 rm -rf "$dst_dir"
