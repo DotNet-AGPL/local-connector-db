@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>db-duckdb</AssemblyName>
+    <RootNamespace>Connector.DuckDb</RootNamespace>
+    <PublishAot>true</PublishAot>
+
+    <!-- 版本资源：缺少版本信息/清单的原生 exe 更容易被安全软件误判 -->
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Product>local-connector-db</Product>
+    <AssemblyTitle>DuckDB connector</AssemblyTitle>
+    <Description>DuckDB 查询 / 执行工具（NativeAOT）</Description>
+    <Company>local-connector-db</Company>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DuckDB.NET.Data.Full" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- DuckDB.NET 用 Activator 构造 STRUCT/MAP 容器，AOT 下必须保留这些泛型构造 -->
+    <TrimmerRootDescriptor Include="ILLink.Descriptors.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Connector.Core\Connector.Core.csproj" />
+  </ItemGroup>
+
+</Project>

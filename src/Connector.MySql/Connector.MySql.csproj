@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>db-mysql</AssemblyName>
+    <RootNamespace>Connector.MySql</RootNamespace>
+    <PublishAot>true</PublishAot>
+
+    <!-- 版本资源：缺少版本信息/清单的原生 exe 更容易被安全软件误判 -->
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Product>local-connector-db</Product>
+    <AssemblyTitle>MySQL connector</AssemblyTitle>
+    <Description>MySQL 查询 / 执行工具（NativeAOT）</Description>
+    <Company>local-connector-db</Company>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MySqlConnector" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Connector.Core\Connector.Core.csproj" />
+  </ItemGroup>
+
+</Project>

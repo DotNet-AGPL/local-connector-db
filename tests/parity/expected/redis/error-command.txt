@@ -1,0 +1,5 @@
+EXIT: 1
+--- STDOUT ---
+正在执行命令: NOTACOMMAND 
+--- STDERR ---
+✗ 命令执行失败: ERR unknown command 'NOTACOMMAND', with args beginning with: 

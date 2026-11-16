@@ -1,0 +1,19 @@
+EXIT: 0
+--- STDOUT ---
+正在执行命令: lcdb_users.aggregate
+
+命令执行完成 (<time>)
+返回 1 个文档
+
+--- 结果 ---
+
+[
+  {
+    "_id": null,
+    "total": 6,
+    "n": 3
+  }
+]
+
+✓ 命令执行成功
+--- STDERR ---

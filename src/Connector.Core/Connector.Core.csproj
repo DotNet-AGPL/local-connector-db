@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Connector.Core</RootNamespace>
+    <AssemblyName>Connector.Core</AssemblyName>
+    <IsAotCompatible>true</IsAotCompatible>
+    <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+</Project>

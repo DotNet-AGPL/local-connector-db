@@ -1,0 +1,5 @@
+EXIT: 1
+--- STDOUT ---
+正在执行查询...
+--- STDERR ---
+✗ 查询执行失败: Cannot add or update a child row: a foreign key constraint fails (`lcdb`.`t_child`, CONSTRAINT `fk_child_parent` FOREIGN KEY (`parent_id`) REFERENCES `t_parent` (`id`))

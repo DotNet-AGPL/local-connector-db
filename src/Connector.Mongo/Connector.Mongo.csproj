@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>db-mongo</AssemblyName>
+    <RootNamespace>Connector.Mongo</RootNamespace>
+    <PublishAot>true</PublishAot>
+
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Product>local-connector-db</Product>
+    <AssemblyTitle>MongoDB connector</AssemblyTitle>
+    <Description>MongoDB 查询 / 执行工具（NativeAOT）</Description>
+    <Company>local-connector-db</Company>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+
+    <!-- Mongo 驱动通过反射构造部分 BSON 序列化器，AOT 下需要完整类型元数据兜底 -->
+    <IlcGenerateCompleteTypeMetadata>true</IlcGenerateCompleteTypeMetadata>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MongoDB.Driver" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Connector.Core\Connector.Core.csproj" />
+  </ItemGroup>
+
+</Project>

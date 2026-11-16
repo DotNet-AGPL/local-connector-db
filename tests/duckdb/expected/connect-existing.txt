@@ -1,0 +1,17 @@
+EXIT: 0
+--- STDOUT ---
+正在打开 DuckDB 数据库: <WORK>\case.duckdb...
+✓ 连接成功！
+DuckDB 版本: <ver>
+
+数据库中的表:
+  - t_cn
+  - t_items
+  - t_parent
+  - t_types
+
+数据库文件大小: <size> KB
+数据库路径: <WORK>\case.duckdb
+
+连接已关闭。
+--- STDERR ---

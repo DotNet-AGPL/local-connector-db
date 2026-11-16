@@ -1,0 +1,13 @@
+<linker>
+  <!-- DuckDB.NET 通过 Activator.CreateInstance 构造 STRUCT / MAP 的容器类型，
+       NativeAOT 下需要显式保留这些泛型实例化的无参构造，否则运行时报
+       MissingMethodException: No parameterless constructor defined。 -->
+  <assembly fullname="System.Private.CoreLib">
+    <type fullname="System.Collections.Generic.Dictionary`2">
+      <method name=".ctor" />
+    </type>
+    <type fullname="System.Collections.Generic.List`1">
+      <method name=".ctor" />
+    </type>
+  </assembly>
+</linker>

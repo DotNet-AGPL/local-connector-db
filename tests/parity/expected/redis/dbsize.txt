@@ -1,0 +1,12 @@
+EXIT: 0
+--- STDOUT ---
+正在执行命令: EXISTS lcdb_test:nope
+
+命令执行完成 (<time>)
+
+--- 结果 ---
+
+0
+
+✓ 命令执行成功
+--- STDERR ---

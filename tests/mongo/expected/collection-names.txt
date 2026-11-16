@@ -1,0 +1,15 @@
+EXIT: 0
+--- STDOUT ---
+正在执行命令: db.getCollectionNames
+
+命令执行完成 (<time>)
+返回 1 个文档
+
+--- 结果 ---
+
+[
+  "lcdb_users"
+]
+
+✓ 命令执行成功
+--- STDERR ---

@@ -1,0 +1,15 @@
+EXIT: 0
+--- STDOUT ---
+数据库文件不存在，将创建新数据库: <WORK>\connect-new.db
+正在打开 SQLite 数据库: <WORK>\connect-new.db...
+✓ 连接成功！
+SQLite 版本: <ver>
+journal_mode: delete
+
+数据库中的表:
+  (空数据库)
+数据库路径: <WORK>\connect-new.db
+✓ 新数据库文件已创建
+
+连接已关闭。
+--- STDERR ---

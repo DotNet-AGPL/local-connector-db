@@ -1,0 +1,21 @@
+EXIT: 0
+--- STDOUT ---
+正在连接到 PostgreSQL 服务器: <host>:<port>...
+✓ 连接成功！
+PostgreSQL 版本: PostgreSQL 17.12 (Debian 17.12-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+
+数据库 "lcdb" 中的表:
+  - t_child
+  - t_cn
+  - t_items
+  - t_parent
+  - t_types
+
+连接信息:
+  主机: <host>
+  端口: 15432
+  用户: postgres
+  数据库: lcdb
+
+连接已关闭。
+--- STDERR ---

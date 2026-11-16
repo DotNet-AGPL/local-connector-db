@@ -1,0 +1,5 @@
+EXIT: 1
+--- STDOUT ---
+正在执行查询...
+--- STDERR ---
+✗ 查询执行失败: password authentication failed for user "postgres"

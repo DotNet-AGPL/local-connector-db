@@ -1,0 +1,15 @@
+EXIT: 0
+--- STDOUT ---
+正在执行命令: lcdb_users.insertOne
+
+命令执行完成 (<time>)
+
+--- 结果 ---
+
+{
+  "acknowledged": true,
+  "insertedId": "<oid>"
+}
+
+✓ 命令执行成功
+--- STDERR ---

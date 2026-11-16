@@ -1,0 +1,5 @@
+EXIT: 1
+--- STDOUT ---
+
+--- STDERR ---
+错误: 请提供 SQL 查询语句 (-q) 或 SQL 文件 (-f)

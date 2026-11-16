@@ -1,0 +1,32 @@
+EXIT: 0
+--- STDOUT ---
+正在执行查询...
+
+查询执行完成 (<time>)
+返回 3 行数据
+
+--- 查询结果 ---
+
+[
+  {
+    "id": 1,
+    "name": "alpha",
+    "qty": 10,
+    "amount": 1.5
+  },
+  {
+    "id": 2,
+    "name": "beta",
+    "qty": 20,
+    "amount": 2.25
+  },
+  {
+    "id": 3,
+    "name": "gamma",
+    "qty": -5,
+    "amount": null
+  }
+]
+
+✓ 查询执行成功
+--- STDERR ---

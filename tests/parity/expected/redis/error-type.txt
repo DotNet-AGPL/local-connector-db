@@ -1,0 +1,5 @@
+EXIT: 1
+--- STDOUT ---
+正在执行命令: INCR lcdb_test:s
+--- STDERR ---
+✗ 命令执行失败: ERR value is not an integer or out of range

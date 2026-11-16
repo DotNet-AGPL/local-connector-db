@@ -1,0 +1,19 @@
+EXIT: 0
+--- STDOUT ---
+正在打开 SQLite 数据库: <WORK>\connect-existing.db...
+✓ 连接成功！
+SQLite 版本: <ver>
+journal_mode: delete
+
+数据库中的表:
+  - t_big
+  - t_child
+  - t_cn
+  - t_items
+  - t_parent
+
+数据库文件大小: <size> KB
+数据库路径: <WORK>\connect-existing.db
+
+连接已关闭。
+--- STDERR ---

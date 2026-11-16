@@ -1,0 +1,16 @@
+* text=auto
+
+# 跨平台脚本：仓库内统一 LF，检出时保持 LF
+*.sh text eol=lf
+*.ps1 text eol=lf
+tests/containers/shell/* text eol=lf
+
+# Windows 脚本保持 CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# 二进制产物
+*.exe binary
+*.dll binary
+*.so binary
+*.so.* binary

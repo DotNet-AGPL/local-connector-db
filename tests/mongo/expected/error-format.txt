@@ -1,0 +1,5 @@
+EXIT: 1
+--- STDOUT ---
+
+--- STDERR ---
+错误: 输出格式必须是 json 或 table

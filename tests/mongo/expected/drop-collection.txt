@@ -1,0 +1,14 @@
+EXIT: 0
+--- STDOUT ---
+正在执行命令: lcdb_users.drop
+
+命令执行完成 (<time>)
+
+--- 结果 ---
+
+{
+  "dropped": true
+}
+
+✓ 命令执行成功
+--- STDERR ---

@@ -1,0 +1,5 @@
+EXIT: 1
+--- STDOUT ---
+正在执行命令: SET lcdb_test:q "hello world" EX 60
+--- STDERR ---
+✗ 命令执行失败: ERR syntax error

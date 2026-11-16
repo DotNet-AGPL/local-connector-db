@@ -1,0 +1,20 @@
+EXIT: 0
+--- STDOUT ---
+正在连接到 Redis 服务器: <host>:<port>...
+✓ 连接成功！
+PING 响应: PONG
+Redis 版本: 7.4.2
+运行模式: standalone
+当前数据库 (db0) 键数量: 1
+
+当前数据库中的键 (最多显示 20 个):
+  - 164CBA9E-87D0-4C6F-8D8F-EED715D25E79dev (hash)
+
+连接信息:
+  主机: <host>
+  端口: 16379
+  数据库: db0
+  密码: 无
+
+连接已关闭。
+--- STDERR ---

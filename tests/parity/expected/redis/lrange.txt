@@ -1,0 +1,16 @@
+EXIT: 0
+--- STDOUT ---
+正在执行命令: LRANGE lcdb_test:list 0 -1
+
+命令执行完成 (<time>)
+
+--- 结果 ---
+
+[
+  "a",
+  "b",
+  "c"
+]
+
+✓ 命令执行成功
+--- STDERR ---

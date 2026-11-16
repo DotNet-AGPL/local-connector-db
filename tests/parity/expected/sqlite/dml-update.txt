@@ -1,0 +1,10 @@
+EXIT: 0
+--- STDOUT ---
+正在执行查询...
+已自动 wal_checkpoint(TRUNCATE)：busy=N log=N checkpointed=N
+
+查询执行完成 (<time>)
+影响 2 行
+
+✓ 查询执行成功
+--- STDERR ---

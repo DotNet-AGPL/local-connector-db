@@ -1,0 +1,41 @@
+EXIT: 0
+--- STDOUT ---
+正在执行查询...
+
+查询执行完成 (<time>)
+返回 3 行数据
+
+--- 查询结果 ---
+
+[
+  {
+    "ID": 1,
+    "NAME": "甲",
+    "AMT": 1.5,
+    "D": "2026-11-13",
+    "TS": "2026-11-13T10:00:00",
+    "TXT": "clob text",
+    "BIN": "<BLOB 5 bytes>"
+  },
+  {
+    "ID": 2,
+    "NAME": "乙",
+    "AMT": null,
+    "D": null,
+    "TS": null,
+    "TXT": null,
+    "BIN": null
+  },
+  {
+    "ID": 9,
+    "NAME": "大对象",
+    "AMT": 1,
+    "D": "2026-11-13",
+    "TS": "2026-11-13T10:00:00",
+    "TXT": "clob text",
+    "BIN": "<BLOB 5 bytes>"
+  }
+]
+
+✓ 查询执行成功
+--- STDERR ---

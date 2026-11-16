@@ -1,0 +1,17 @@
+EXIT: 0
+--- STDOUT ---
+正在执行命令: lcdb_users.findOne
+
+命令执行完成 (<time>)
+
+--- 结果 ---
+
+{
+  "_id": "<oid>",
+  "id": 1,
+  "name": "甲",
+  "amt": 1.5
+}
+
+✓ 命令执行成功
+--- STDERR ---

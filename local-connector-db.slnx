@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Connector.Core/Connector.Core.csproj" />
+    <Project Path="src/Connector.Sqlite/Connector.Sqlite.csproj" />
+    <Project Path="src/Connector.MySql/Connector.MySql.csproj" />
+    <Project Path="src/Connector.PostgreSql/Connector.PostgreSql.csproj" />
+    <Project Path="src/Connector.DuckDb/Connector.DuckDb.csproj" />
+    <Project Path="src/Connector.ClickHouse/Connector.ClickHouse.csproj" />
+    <Project Path="src/Connector.Redis/Connector.Redis.csproj" />
+    <Project Path="src/Connector.Dm/Connector.Dm.csproj" />
+    <Project Path="src/Connector.Mongo/Connector.Mongo.csproj" />
+    <Project Path="src/Connector.SqlServer/Connector.SqlServer.csproj" />
+    <Project Path="src/Connector.Oracle/Connector.Oracle.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+</Solution>

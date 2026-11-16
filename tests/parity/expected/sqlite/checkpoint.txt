@@ -1,0 +1,4 @@
+EXIT: 0
+--- STDOUT ---
+✓ wal_checkpoint(TRUNCATE) 完成：busy=N log=N checkpointed=N（journal_mode=delete）
+--- STDERR ---

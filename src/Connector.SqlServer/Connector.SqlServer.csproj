@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>db-sqlserver</AssemblyName>
+    <RootNamespace>Connector.SqlServer</RootNamespace>
+    <PublishAot>true</PublishAot>
+
+    <!-- Microsoft.Data.SqlClient 不支持不变全球化，必须覆盖 Directory.Build.props 的 true -->
+    <InvariantGlobalization>false</InvariantGlobalization>
+
+    <!-- 版本资源：缺少版本信息/清单的原生 exe 更容易被安全软件误判 -->
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Product>local-connector-db</Product>
+    <AssemblyTitle>SQL Server connector</AssemblyTitle>
+    <Description>SQL Server 查询 / 执行工具（NativeAOT）</Description>
+    <Company>local-connector-db</Company>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" />
+    <!-- 非不变 + linux 才需要 app-local ICU；Windows 自带 NLS，不随包分发 -->
+    <PackageReference Include="Icu4C.Runtime" Condition="$(RuntimeIdentifier.StartsWith('linux'))" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Connector.Core\Connector.Core.csproj" />
+  </ItemGroup>
+
+</Project>

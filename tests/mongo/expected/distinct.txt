@@ -1,0 +1,17 @@
+EXIT: 0
+--- STDOUT ---
+正在执行命令: lcdb_users.distinct
+
+命令执行完成 (<time>)
+返回 3 个文档
+
+--- 结果 ---
+
+[
+  "gamma",
+  "乙",
+  "甲"
+]
+
+✓ 命令执行成功
+--- STDERR ---

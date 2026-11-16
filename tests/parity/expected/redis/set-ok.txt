@@ -1,0 +1,12 @@
+EXIT: 0
+--- STDOUT ---
+正在执行命令: SET lcdb_test:k hello EX 60
+
+命令执行完成 (<time>)
+
+--- 结果 ---
+
+OK
+
+✓ 命令执行成功
+--- STDERR ---

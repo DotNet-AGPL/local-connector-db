@@ -1,0 +1,5 @@
+EXIT: 1
+--- STDOUT ---
+
+--- STDERR ---
+错误: 请提供 MongoDB 操作命令 (-c)
