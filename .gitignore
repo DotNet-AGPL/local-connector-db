@@ -4,6 +4,10 @@ obj/
 TestResults/
 BenchmarkDotNet.Artifacts/
 
+# NuGet 仓库本地缓存与产出（NuGet.Config 把 globalPackagesFolder 指向 ./.nuget/packages）
+.nuget/
+artifacts/
+
 # IDE / 本地状态
 .vs/
 .idea/
