@@ -16,6 +16,8 @@
     .\build.ps1
     .\build.ps1 -Only sqlite
     .\build.ps1 -Only sqlite -Rid linux-x64
+    .\build.ps1 -Only sqlite -Rid osx-arm64
+    .\build.ps1 -Skip sqlserver,dm
     .\build.ps1 -Clean
 #>
 [CmdletBinding()]
@@ -23,13 +25,54 @@ param(
     [ValidateSet('sqlite', 'mysql', 'postgres', 'duckdb', 'clickhouse', 'redis', 'dm', 'mongo', 'sqlserver', 'oracle')]
     [string[]]$Only,
 
-    [string]$Rid = 'win-x64',
+    # 目标 RID；省略时按宿主平台推断（Windows→win-x64、Linux→linux-x64、Apple Silicon→osx-arm64）
+    [string]$Rid,
+
+    # 跳过指定库（排查用），例如 -Skip sqlserver,dm
+    [ValidateSet('sqlite', 'mysql', 'postgres', 'duckdb', 'clickhouse', 'redis', 'dm', 'mongo', 'sqlserver', 'oracle')]
+    [string[]]$Skip,
 
     [switch]$Clean
 )
 
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
+
+$supportedRids = @('win-x64', 'linux-x64', 'osx-arm64')
+
+function Resolve-HostRid {
+    $arch = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString()
+
+    if ($IsWindows) {
+        if ($arch -ne 'X64') {
+            throw ("当前 Windows 架构 {0} 暂无制品（仅支持 win-x64）" -f $arch)
+        }
+
+        return 'win-x64'
+    }
+
+    if ($IsMacOS) {
+        if ($arch -eq 'Arm64') {
+            return 'osx-arm64'
+        }
+
+        throw ("Intel Mac（{0}）暂无制品：PublishAotCross 只支持 osx-arm64" -f $arch)
+    }
+
+    if ($arch -ne 'X64') {
+        throw ("当前 Linux 架构 {0} 暂无制品（仅支持 linux-x64）" -f $arch)
+    }
+
+    return 'linux-x64'
+}
+
+if (-not $Rid) {
+    $Rid = Resolve-HostRid
+}
+
+if ($Rid -notin $supportedRids) {
+    throw ("不支持的 RID: {0}（可选: {1}）" -f $Rid, ($supportedRids -join ', '))
+}
 
 $root = $PSScriptRoot
 $srcRoot = Join-Path $root 'src'
@@ -49,6 +92,10 @@ $targets = [ordered]@{
 
 $names = if ($Only) { $Only } else { @($targets.Keys) }
 $names = @($names | Where-Object { Test-Path (Join-Path $srcRoot $targets[$_].Project) })
+
+if ($Skip) {
+    $names = @($names | Where-Object { $_ -notin $Skip })
+}
 
 if ($names.Count -eq 0) {
     throw '没有可构建的项目'

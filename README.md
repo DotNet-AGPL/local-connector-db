@@ -37,20 +37,23 @@ bin/                        # 构建产物（不入库，见下）
 
 ```bash
 git clone <repo> ~/.agents/skills/local-connector-db
-cd ~/.agents/skills/local-connector-db && ./rebuild.sh   # 生成 bin/（或从 release 解压产物）
+cd ~/.agents/skills/local-connector-db && ./rebuild.sh   # 生成宿主平台 bin/（或从 release 解压产物）
 ```
 
-Windows 用 `rebuild.bat`（或双击）。产物必须保留 `BUILD-INFO.txt` 与同目录原生依赖（`e_sqlite3.dll`、`duckdb.dll`、`Microsoft.Data.SqlClient.SNI.dll`；`sqlserver-linux-x64/` 还需 `libicu*.so`）。
+Windows 用 `rebuild.bat`（或双击）。两者都不带参数时自动按宿主平台选 RID（Linux→linux-x64、macOS Apple Silicon→osx-arm64、Windows→win-x64）。产物必须保留 `BUILD-INFO.txt` 与同目录原生依赖（`e_sqlite3.dll`、`duckdb.dll`、`Microsoft.Data.SqlClient.SNI.dll`；`sqlserver-linux-x64/` 还需 `libicu*.so`）。
 
 ## 构建
 
 需要 .NET SDK 11 + PowerShell 7（首次构建需联网）：
 
 ```bash
-./rebuild.sh                 # 全量重建 + 校验（Linux/macOS）
+./rebuild.sh                 # 按宿主平台重建 + 校验
+./rebuild.sh all             # 三平台：win-x64 + linux-x64 + osx-arm64
+./rebuild.sh osx             # 只重建 osx-arm64（可在 Windows/Linux 上交叉构建）
 ./rebuild.sh verify          # 只校验，不构建
-.\build.ps1 -Only mysql      # 单库，默认当前平台
+.\build.ps1 -Only mysql      # 单库，RID 按宿主推断
 .\build.ps1 -Only mysql -Rid linux-x64 -Clean
+.\build.ps1 -Skip sqlserver,dm
 ```
 
 `bin/` 不纳入版本库：353 MB 二进制每次重建都会产生新 blob，历史会迅速膨胀。发布时把 `bin/` 打包为 release 资产，或由使用者本地构建。详见 [reference/build.md](reference/build.md)。
@@ -60,3 +63,4 @@ Windows 用 `rebuild.bat`（或双击）。产物必须保留 `BUILD-INFO.txt` �
 - `bin/<db>-<rid>/` 是自包含目录，整目录分发；不要只拷可执行文件。
 - 切换 RID 构建必须带 `-Clean`（restore 按 RID 走）。
 - 日期时间一律按库中原值输出，不做时区转换；超过 2^53 的整数输出字符串。
+- `osx-arm64` 制品尚未在真机实测；跨机器拷贝后需 `xattr -dr com.apple.quarantine bin/<db>-osx-arm64` 才能直接运行。

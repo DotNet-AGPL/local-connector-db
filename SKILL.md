@@ -13,18 +13,20 @@ description: 连接并操作 MySQL、PostgreSQL、SQLite、DuckDB、MongoDB、Re
 
 每个 `bin/<db>-<rid>/` 都是自包含目录，整目录拷贝即可运行。下表中的「额外文件」必须与可执行文件放在同一目录，不要单独删除。
 
-| 数据库 | Windows 入口 | Linux 入口 | Windows 额外文件 |
-|-------|-------------|-----------|-----------------|
-| SQLite | `bin/sqlite-win-x64/db-sqlite.exe` | `bin/sqlite-linux-x64/db-sqlite` | `e_sqlite3.dll` |
-| MySQL | `bin/mysql-win-x64/db-mysql.exe` | `bin/mysql-linux-x64/db-mysql` | - |
-| PostgreSQL | `bin/postgres-win-x64/db-postgres.exe` | `bin/postgres-linux-x64/db-postgres` | - |
-| DuckDB | `bin/duckdb-win-x64/db-duckdb.exe` | `bin/duckdb-linux-x64/db-duckdb` | `duckdb.dll` |
-| MongoDB | `bin/mongo-win-x64/db-mongo.exe` | `bin/mongo-linux-x64/db-mongo` | - |
-| Redis | `bin/redis-win-x64/db-redis.exe` | `bin/redis-linux-x64/db-redis` | - |
-| ClickHouse | `bin/clickhouse-win-x64/db-clickhouse.exe` | `bin/clickhouse-linux-x64/db-clickhouse` | - |
-| Oracle | `bin/oracle-win-x64/db-oracle.exe` | `bin/oracle-linux-x64/db-oracle` | - |
-| SQL Server | `bin/sqlserver-win-x64/db-sqlserver.exe` | `bin/sqlserver-linux-x64/db-sqlserver` | `Microsoft.Data.SqlClient.SNI.dll` |
-| 达梦 | `bin/dm-win-x64/db-dm.exe` | `bin/dm-linux-x64/db-dm` | - |
+| 数据库 | Windows 入口 | Linux 入口 | macOS 入口 | Windows 额外文件 |
+|-------|-------------|-----------|-----------|-----------------|
+| SQLite | `bin/sqlite-win-x64/db-sqlite.exe` | `bin/sqlite-linux-x64/db-sqlite` | `bin/sqlite-osx-arm64/db-sqlite` | `e_sqlite3.dll` |
+| MySQL | `bin/mysql-win-x64/db-mysql.exe` | `bin/mysql-linux-x64/db-mysql` | `bin/mysql-osx-arm64/db-mysql` | - |
+| PostgreSQL | `bin/postgres-win-x64/db-postgres.exe` | `bin/postgres-linux-x64/db-postgres` | `bin/postgres-osx-arm64/db-postgres` | - |
+| DuckDB | `bin/duckdb-win-x64/db-duckdb.exe` | `bin/duckdb-linux-x64/db-duckdb` | `bin/duckdb-osx-arm64/db-duckdb` | `duckdb.dll` |
+| MongoDB | `bin/mongo-win-x64/db-mongo.exe` | `bin/mongo-linux-x64/db-mongo` | `bin/mongo-osx-arm64/db-mongo` | - |
+| Redis | `bin/redis-win-x64/db-redis.exe` | `bin/redis-linux-x64/db-redis` | `bin/redis-osx-arm64/db-redis` | - |
+| ClickHouse | `bin/clickhouse-win-x64/db-clickhouse.exe` | `bin/clickhouse-linux-x64/db-clickhouse` | `bin/clickhouse-osx-arm64/db-clickhouse` | - |
+| Oracle | `bin/oracle-win-x64/db-oracle.exe` | `bin/oracle-linux-x64/db-oracle` | `bin/oracle-osx-arm64/db-oracle` | - |
+| SQL Server | `bin/sqlserver-win-x64/db-sqlserver.exe` | `bin/sqlserver-linux-x64/db-sqlserver` | `bin/sqlserver-osx-arm64/db-sqlserver` | `Microsoft.Data.SqlClient.SNI.dll` |
+| 达梦 | `bin/dm-win-x64/db-dm.exe` | `bin/dm-linux-x64/db-dm` | `bin/dm-osx-arm64/db-dm` | - |
+
+macOS 列对应 Apple Silicon（`osx-arm64`）：仓库不预置该平台制品，在 Mac 上首次使用前跑 `bash rebuild.sh`（按宿主自动选 RID）生成；该平台尚未在真机实测。`sqlserver` 与 `dm` 在非 Windows 平台都走纯托管驱动，不需要额外原生库。
 
 Linux 侧只有 `sqlserver-linux-x64/` 需要 `libicu*.so`（运行依赖，必须随目录一起分发）。
 
@@ -148,4 +150,4 @@ SQLite / DuckDB 的 `-f` 支持多条 DDL/DML，执行方式由**首关键字**�
 
 - **完整参数格式**（每个库的 `query` / `connect` 签名、SQLite 专属选项、通用参数）：[reference/cli.md](reference/cli.md)
 - **各库特性**（连接参数、类型映射、专有行为、已知限制）：[reference/databases.md](reference/databases.md)
-- **重新构建制品**（`bin/` 被误删时、SDK 与 ICU 策略）：[reference/build.md](reference/build.md)
+- **重新构建制品**（`bin/` 被误删时、三平台入口、SDK 与 ICU 策略）：[reference/build.md](reference/build.md)

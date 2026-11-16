@@ -7,26 +7,55 @@ rem ============================================================
 rem  local-connector-db 制品重建（bin 目录误删后跑这个）
 rem
 rem  用法：
-rem     rebuild.bat          重建 win-x64 + linux-x64 全部制品
-rem     rebuild.bat win      只重建 win-x64
-rem     rebuild.bat linux    只重建 linux-x64
-rem     rebuild.bat verify   只校验现有制品，不构建
+rem    rebuild.bat             只重建 win-x64（宿主平台）
+rem    rebuild.bat linux       只重建 linux-x64（Windows 上交叉编译）
+rem    rebuild.bat osx         只重建 osx-arm64（交叉编译，自动拉 macOS SDK）
+rem    rebuild.bat all         重建三平台（win-x64 + linux-x64 + osx-arm64）
+rem    rebuild.bat verify      只校验 win-x64 的现存制品
+rem    rebuild.bat verify all  只校验三平台
 rem
-rem  前置：.NET SDK 11、PowerShell 7+（pwsh）。
-rem  首次构建要联网（拉 NuGet 包 + PublishAotCross 的 Zig 工具链）。
+rem  前置（构建时）：.NET SDK 11、PowerShell 7+（pwsh）。
+rem  首次构建要联网（拉 NuGet 包 + PublishAotCross 的 Zig / MacOSX.SDK 工具链）。
 rem ============================================================
 
-set "RIDS=win-x64 linux-x64"
-set "DO_BUILD=1"
-if /i "%~1"=="win"      set "RIDS=win-x64"
-if /i "%~1"=="win-x64"  set "RIDS=win-x64"
-if /i "%~1"=="linux"    set "RIDS=linux-x64"
-if /i "%~1"=="linux-x64" set "RIDS=linux-x64"
-if /i "%~1"=="verify"   set "DO_BUILD=0"
+if "%~1"=="" set "PAUSE_ON_EXIT=1"
+
+set "MODE=build"
+if /i "%~1"=="verify" (
+    set "MODE=verify"
+    shift
+)
+
+set "RIDS="
+:parse
+if "%~1"=="" goto :parsed
+set "TOK=%~1"
+set "KNOWN=0"
+if /i "%TOK%"=="all" ( set "RIDS=%RIDS% win-x64 linux-x64 osx-arm64" & set "KNOWN=1" )
+if /i "%TOK%"=="win" ( set "RIDS=%RIDS% win-x64" & set "KNOWN=1" )
+if /i "%TOK%"=="win-x64" ( set "RIDS=%RIDS% win-x64" & set "KNOWN=1" )
+if /i "%TOK%"=="linux" ( set "RIDS=%RIDS% linux-x64" & set "KNOWN=1" )
+if /i "%TOK%"=="linux-x64" ( set "RIDS=%RIDS% linux-x64" & set "KNOWN=1" )
+if /i "%TOK%"=="osx" ( set "RIDS=%RIDS% osx-arm64" & set "KNOWN=1" )
+if /i "%TOK%"=="osx-arm64" ( set "RIDS=%RIDS% osx-arm64" & set "KNOWN=1" )
+if /i "%TOK%"=="mac" ( set "RIDS=%RIDS% osx-arm64" & set "KNOWN=1" )
+if /i "%TOK%"=="macos" ( set "RIDS=%RIDS% osx-arm64" & set "KNOWN=1" )
+if "%KNOWN%"=="0" (
+    echo [ERROR] 未知目标: %TOK%（可选: win / linux / osx / all）
+    if defined PAUSE_ON_EXIT pause
+    exit /b 2
+)
+shift
+goto :parse
+
+:parsed
+if "%RIDS%"=="" set "RIDS=win-x64"
 
 echo ============================================
 echo  local-connector-db 制品重建
 echo ============================================
+
+if /i "%MODE%"=="verify" goto :check_verify
 
 where dotnet >nul 2>nul
 if errorlevel 1 goto :no_dotnet
@@ -34,14 +63,19 @@ where pwsh >nul 2>nul
 if errorlevel 1 goto :no_pwsh
 if not exist "src\Directory.Build.props" goto :no_src
 if not exist "build.ps1" goto :no_src
-
 for /f "delims=" %%v in ('dotnet --version 2^>nul') do set "SDK_VER=%%v"
 echo [i] dotnet SDK : %SDK_VER%
+goto :checks_done
+
+:check_verify
+if not exist "bin" goto :no_bin
+
+:checks_done
 echo [i] 目标 RID   : %RIDS%
-if "%DO_BUILD%"=="0" echo [i] 模式       : 仅校验
+if /i "%MODE%"=="verify" echo [i] 模式       : 仅校验
 echo.
 
-if "%DO_BUILD%"=="1" (
+if /i "%MODE%"=="build" (
     for %%R in (%RIDS%) do (
         for %%D in (sqlite mysql postgres duckdb clickhouse redis dm mongo sqlserver oracle) do (
             call :build_one %%D %%R
@@ -51,12 +85,43 @@ if "%DO_BUILD%"=="1" (
 )
 
 echo.
-call :verify
-if errorlevel 1 goto :failed
+echo ==^> 校验产物
+set "MISSING=0"
+set "OSX_HINT=0"
+for %%D in (sqlite mysql postgres duckdb clickhouse redis dm mongo sqlserver oracle) do (
+    for %%R in (%RIDS%) do (
+        if not exist "bin\%%D-%%R\db-%%D*" (
+            echo [MISS] bin\%%D-%%R 缺少可执行文件
+            set "MISSING=1"
+        ) else (
+            if /i "%%D-%%R"=="sqlserver-linux-x64" (
+                dir /b "bin\%%D-%%R\*icu*" >nul 2>nul
+                if errorlevel 1 (
+                    echo [MISS] bin\%%D-%%R 缺少 ICU 文件
+                    set "MISSING=1"
+                )
+            )
+        )
+        if /i "%%R"=="osx-arm64" set "OSX_HINT=1"
+    )
+)
+
+if "%MISSING%"=="1" goto :failed
+
+if "%OSX_HINT%"=="1" (
+    echo.
+    echo [i] macOS：从别的机器拷贝/下载的制品带 quarantine 标记，首次运行前执行
+    echo     xattr -dr com.apple.quarantine bin\^<db^>-osx-arm64
+)
+
+where pwsh >nul 2>nul
+if not errorlevel 1 (
+    for /f "delims=" %%S in ('pwsh -NoProfile -Command "'{0:N1}' -f ((Get-ChildItem -Recurse -File 'bin' | Measure-Object Length -Sum).Sum/1MB)"') do echo [i] bin 总大小 : %%S MB
+)
 
 echo.
 echo [OK] 制品重建完成
-if "%~1"=="" pause
+if defined PAUSE_ON_EXIT pause
 exit /b 0
 
 rem ------------------------------------------------------------
@@ -77,54 +142,27 @@ if errorlevel 1 (
 exit /b 0
 
 rem ------------------------------------------------------------
-rem  win-x64：全部走系统 NLS / 不变模式，不需要 ICU 文件
-rem  linux-x64：只有 sqlserver 是非不变全球化，必须带 app-local ICU
-rem ------------------------------------------------------------
-:verify
-echo ==^> 校验产物
-set "MISSING=0"
-for %%D in (sqlite mysql postgres duckdb clickhouse redis dm mongo sqlserver oracle) do (
-    for %%R in (%RIDS%) do (
-        if not exist "bin\%%D-%%R\db-%%D*" (
-            echo [MISS] bin\%%D-%%R 缺少可执行文件
-            set "MISSING=1"
-        ) else (
-            if /i "%%D-%%R"=="sqlserver-linux-x64" (
-                dir /b "bin\%%D-%%R\*icu*" >nul 2>nul
-                if errorlevel 1 (
-                    echo [MISS] bin\%%D-%%R 缺少 ICU 文件
-                    set "MISSING=1"
-                )
-            )
-        )
-    )
-)
-
-if "%MISSING%"=="1" (
-    echo [ERROR] 有制品缺失，见上面的 [MISS]
-    exit /b 1
-)
-
-for /f "delims=" %%S in ('pwsh -NoProfile -Command "'{0:N1}' -f ((Get-ChildItem -Recurse -File 'bin' | Measure-Object Length -Sum).Sum/1MB)"') do echo [i] bin 总大小 : %%S MB
-exit /b 0
-
-rem ------------------------------------------------------------
 :no_dotnet
 echo [ERROR] 找不到 dotnet。请安装 .NET SDK 11：https://dotnet.microsoft.com/download
-if "%~1"=="" pause
+if defined PAUSE_ON_EXIT pause
 exit /b 1
 
 :no_pwsh
 echo [ERROR] 找不到 pwsh（PowerShell 7+）。安装：winget install Microsoft.PowerShell
-if "%~1"=="" pause
+if defined PAUSE_ON_EXIT pause
 exit /b 1
 
 :no_src
-echo [ERROR] 当前目录不像 skill 根目录（缺 build.ps1 或 src\Directory.Build.props）
+echo [ERROR] 当前目录不像仓库根目录（缺 build.ps1 或 src\Directory.Build.props）
 echo         请把本文件放在 local-connector-db 目录下运行。
-if "%~1"=="" pause
+if defined PAUSE_ON_EXIT pause
+exit /b 1
+
+:no_bin
+echo [ERROR] 找不到 bin 目录：先跑一次构建，或从 release 解压制品
+if defined PAUSE_ON_EXIT pause
 exit /b 1
 
 :failed
-if "%~1"=="" pause
+if defined PAUSE_ON_EXIT pause
 exit /b 1
