@@ -16,3 +16,6 @@ BenchmarkDotNet.Artifacts/
 *.env.local
 dbeaver_*.csv
 *.log
+
+# 测试运行缓存（tests/parity/cases-sqlite.ps1 自动生成）
+tests/parity/.cache/
