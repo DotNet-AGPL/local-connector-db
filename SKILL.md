@@ -151,3 +151,7 @@ SQLite / DuckDB 的 `-f` 支持多条 DDL/DML，执行方式由**首关键字**�
 - **完整参数格式**（每个库的 `query` / `connect` 签名、SQLite 专属选项、通用参数）：[reference/cli.md](reference/cli.md)
 - **各库特性**（连接参数、类型映射、专有行为、已知限制）：[reference/databases.md](reference/databases.md)
 - **重新构建制品**（`bin/` 被误删时、三平台入口、SDK 与 ICU 策略）：[reference/build.md](reference/build.md)
+
+## 许可证
+
+AGPL-3.0-or-later，全文见仓库根目录 [LICENSE](LICENSE)。修改后分发或以网络服务形式提供时，需同样以 AGPL 提供对应源码。

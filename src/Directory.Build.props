@@ -17,6 +17,8 @@
          Zig / lld / xwin 版本与 AotPreferCustom 都由包内 ToolsetsVersion.props 提供默认值，
          这里不用重复声明（要固定版本再显式写 ZigVersion 等）。 -->
     <NoWarn>$(NoWarn);LNK4099</NoWarn>
+    <!-- 许可证元数据：AGPL-3.0-or-later，全文见仓库根目录 LICENSE -->
+    <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
   </PropertyGroup>
 
   <!-- 全球化策略：默认用不变模式（不需要 ICU，也不依赖系统 libicu）。

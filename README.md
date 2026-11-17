@@ -64,3 +64,14 @@ Windows 用 `rebuild.bat`（或双击）。两者都不带参数时自动按宿�
 - 切换 RID 构建必须带 `-Clean`（restore 按 RID 走）。
 - 日期时间一律按库中原值输出，不做时区转换；超过 2^53 的整数输出字符串。
 - `osx-arm64` 制品已在 Windows 上交叉构建通过（尚未在 macOS 真机验证）；跨机器拷贝后需 `xattr -dr com.apple.quarantine bin/<db>-osx-arm64` 才能直接运行。
+
+## 许可证
+
+本项目以 **GNU Affero General Public License v3.0 or later**（AGPL-3.0-or-later）发布，全文见 [LICENSE](LICENSE)。
+
+几点实际影响：
+
+- 修改后分发（含以容器、制成品形式打包）必须同样以 AGPL 提供完整对应源码
+- 把本项目作为网络服务对外提供时，需向使用者提供获取源码的途径（第 13 条）
+- `bin/` 不入库，若把构建出的制品单独分发，需同时提供源码或书面获取途径
+- 第三方 NuGet 依赖各自保留原有许可证，不受本项目授权影响
