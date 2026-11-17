@@ -75,11 +75,12 @@ rebuild.bat verify all         # 只校验三平台
 
 ## macOS 注意事项
 
-- `osx-arm64` 制品尚未在真机实测，目前只验证过从 Windows 交叉构建成功
+- `osx-arm64` 的 10 个制品已在 Windows 上交叉构建通过（2026-11-17，`.NET 11.0.100`）；尚未在 macOS 真机上运行验证
 - 从别的机器拷贝/下载的产物会带 quarantine 标记，首次运行前执行：
   `xattr -dr com.apple.quarantine bin/<db>-osx-arm64`
 - 不需要安装 Xcode：`MacOSX.SDK` 由 PublishAotCross 自动引入，仅提供链接所需的 SDK 子集
 - `sqlserver` 在非 Windows 平台走 managed SNI（`Microsoft.Data.SqlClient.SNI.runtime` 只带 Windows 原生库），`dm` 的 `DM.DmProvider` 为纯托管实现，两者都不依赖 macOS 原生库
+- Swift 运行库：NativeAOT 的 Apple Crypto 静态库带 Swift autolink 条目，Zig 链接器不解析，`PublishAotCross.Tools` 1.0.2.13 及更早会让走 TLS/X509 的库（mysql / postgres / sqlserver 等）报 `undefined symbol: __swift_FORCE_LOAD_$_swift*`。1.0.2.14 起包内的 `GetSwiftAutolinkArgs` 会读取原生静态库的 `LC_LINKER_OPTION` 并重放为 `-lswift*`，项目里不需要手写补齐（旧的 `src/Directory.Build.targets` 已删除）
 
 ## 产物说明
 

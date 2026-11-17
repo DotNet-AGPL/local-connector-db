@@ -26,7 +26,7 @@ description: 连接并操作 MySQL、PostgreSQL、SQLite、DuckDB、MongoDB、Re
 | SQL Server | `bin/sqlserver-win-x64/db-sqlserver.exe` | `bin/sqlserver-linux-x64/db-sqlserver` | `bin/sqlserver-osx-arm64/db-sqlserver` | `Microsoft.Data.SqlClient.SNI.dll` |
 | 达梦 | `bin/dm-win-x64/db-dm.exe` | `bin/dm-linux-x64/db-dm` | `bin/dm-osx-arm64/db-dm` | - |
 
-macOS 列对应 Apple Silicon（`osx-arm64`）：仓库不预置该平台制品，在 Mac 上首次使用前跑 `bash rebuild.sh`（按宿主自动选 RID）生成；该平台尚未在真机实测。`sqlserver` 与 `dm` 在非 Windows 平台都走纯托管驱动，不需要额外原生库。
+macOS 列对应 Apple Silicon（`osx-arm64`）：仓库不预置该平台制品，在 Mac 上首次使用前跑 `bash rebuild.sh`（按宿主自动选 RID）生成。该平台已在 Windows 上交叉构建通过，但尚未在 macOS 真机上运行验证。`sqlserver` 与 `dm` 在非 Windows 平台都走纯托管驱动，不需要额外原生库。
 
 Linux 侧只有 `sqlserver-linux-x64/` 需要 `libicu*.so`（运行依赖，必须随目录一起分发）。
 
