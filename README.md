@@ -1,6 +1,6 @@
 # local-skill-tools
 
-本地工具集：数据库连接器 + 远程操作工具，同时是 OpenCode / Claude 风格的 Agent Skill。12 个工具各自编译为 **.NET NativeAOT 单文件可执行程序**，运行时不需要 Node.js、驱动或 .NET 运行时。
+本地工具集：数据库连接器 + 远程操作 + 文档办公，同时是 OpenCode / Claude 风格的 Agent Skill。13 个工具各自编译为 **.NET NativeAOT 单文件可执行程序**，运行时不需要 Node.js、驱动或 .NET 运行时。
 
 ## 数据库
 
@@ -26,6 +26,14 @@
 
 `net-ssh` 与 `net-sftp` 共享认证与主机密钥校验逻辑（`src/Net.Core`），密码只从标准输入读取。
 
+## 文档办公
+
+| 工具 | 用途 | 入口（win / linux） |
+|---|---|---|
+| `file-office` | docx / xlsx / pptx / pdf / md 的读取、转换与模板填充 | `bin/office-win-x64/file-office.exe` / `bin/office-linux-x64/file-office` |
+
+依赖内置的 Wisdom.Office（MIT），不装 Office / WPS / pandoc。能力矩阵与限制见 [reference/office.md](reference/office.md)。
+
 用法、入口推断规则、参数与各库特性见 [SKILL.md](SKILL.md)。SKILL.md 是给 Agent 读的入口，细节在 `reference/` 下按需加载。
 
 ## 目录结构
@@ -34,6 +42,7 @@
 SKILL.md                    # Agent 入口：选库、快速开始、输出约定
 reference/cli.md            # 每个库的 query / connect 完整参数
 reference/net.md            # SSH / SFTP 认证、主机密钥、递归传输
+reference/office.md         # Word / Excel / PPT / PDF / Markdown 读写与转换
 reference/databases.md      # 各库连接参数、类型映射、专有行为
 reference/build.md          # 重建流程、RID 与 ICU 策略
 src/Connector.*/            # 每个数据库一个 .NET 项目

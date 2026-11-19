@@ -56,6 +56,7 @@ $toolTable = [ordered]@{
     oracle     = 'db-oracle'
     ssh        = 'net-ssh'
     sftp       = 'net-sftp'
+    office     = 'file-office'
 }
 
 function Resolve-HostRid {
@@ -184,7 +185,7 @@ function New-Package {
 
 包内第三方组件（MySqlConnector、Npgsql、Microsoft.Data.Sqlite、DuckDB.NET、
 MongoDB.Driver、StackExchange.Redis、Oracle.ManagedDataAccess.Core、Microsoft.Data.SqlClient、
-DM.DmProvider、ClickHouse.Driver、SSH.NET 等）各自保留原有许可证，不受本项目授权影响。
+DM.DmProvider、ClickHouse.Driver、SSH.NET、Wisdom.Office（MIT）等）各自保留原有许可证，不受本项目授权影响。
 
 构建信息（SDK 版本、构建时间、各文件 SHA256）见 bin/<tool>-<rid>/BUILD-INFO.txt。
 "@

@@ -11,6 +11,7 @@
     <Project Path="src/Connector.Mongo/Connector.Mongo.csproj" />
     <Project Path="src/Connector.SqlServer/Connector.SqlServer.csproj" />
     <Project Path="src/Connector.Oracle/Connector.Oracle.csproj" />
+    <Project Path="src/FileOffice/FileOffice.csproj" />
     <Project Path="src/Net.Core/Net.Core.csproj" />
     <Project Path="src/Net.Ssh/Net.Ssh.csproj" />
     <Project Path="src/Net.Sftp/Net.Sftp.csproj" />
@@ -142,6 +143,12 @@
     <File Path="tests/mongo/expected/ping.txt" />
     <File Path="tests/mongo/expected/table.txt" />
     <File Path="tests/mongo/expected/update-many.txt" />
+  </Folder>
+  <Folder Name="/tests/office/">
+    <File Path="tests/office/run.ps1" />
+  </Folder>
+  <Folder Name="/tests/office/fixtures/">
+    <File Path="tests/office/fixtures/template.xlsx" />
   </Folder>
   <Folder Name="/tests/oracle/">
     <File Path="tests/oracle/run.ps1" />

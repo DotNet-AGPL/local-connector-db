@@ -16,5 +16,6 @@
     <PackageVersion Include="PublishAotCross.Tools" Version="1.0.2.14" />
     <PackageVersion Include="StackExchange.Redis" Version="3.4.35" />
     <PackageVersion Include="SSH.NET" Version="2026.0.1" />
+    <PackageVersion Include="Wisdom.Office" Version="1.0.3" />
   </ItemGroup>
 </Project>

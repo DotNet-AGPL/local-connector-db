@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>file-office</AssemblyName>
+    <RootNamespace>FileOffice</RootNamespace>
+    <PublishAot>true</PublishAot>
+
+    <!-- 版本资源：缺少版本信息/清单的原生 exe 更容易被安全软件误判 -->
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Product>local-skill-tools</Product>
+    <AssemblyTitle>Office reader / converter</AssemblyTitle>
+    <Description>Word / Excel / PowerPoint / PDF / Markdown 读写与转换（NativeAOT）</Description>
+    <Company>local-skill-tools</Company>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Wisdom.Office" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Connector.Core\Connector.Core.csproj" />
+  </ItemGroup>
+
+</Project>

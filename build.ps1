@@ -22,14 +22,14 @@
 #>
 [CmdletBinding()]
 param(
-    [ValidateSet('sqlite', 'mysql', 'postgres', 'duckdb', 'clickhouse', 'redis', 'dm', 'mongo', 'sqlserver', 'oracle', 'ssh', 'sftp')]
+    [ValidateSet('sqlite', 'mysql', 'postgres', 'duckdb', 'clickhouse', 'redis', 'dm', 'mongo', 'sqlserver', 'oracle', 'ssh', 'sftp', 'office')]
     [string[]]$Only,
 
     # 目标 RID；省略时按宿主平台推断（Windows→win-x64、Linux→linux-x64、Apple Silicon→osx-arm64）
     [string]$Rid,
 
     # 跳过指定库（排查用），例如 -Skip sqlserver,dm
-    [ValidateSet('sqlite', 'mysql', 'postgres', 'duckdb', 'clickhouse', 'redis', 'dm', 'mongo', 'sqlserver', 'oracle', 'ssh', 'sftp')]
+    [ValidateSet('sqlite', 'mysql', 'postgres', 'duckdb', 'clickhouse', 'redis', 'dm', 'mongo', 'sqlserver', 'oracle', 'ssh', 'sftp', 'office')]
     [string[]]$Skip,
 
     [switch]$Clean
@@ -90,6 +90,7 @@ $targets = [ordered]@{
     oracle   = @{ Project = 'Connector.Oracle'; Exe = 'db-oracle' }
     ssh      = @{ Project = 'Net.Ssh'; Exe = 'net-ssh' }
     sftp     = @{ Project = 'Net.Sftp'; Exe = 'net-sftp' }
+    office   = @{ Project = 'FileOffice'; Exe = 'file-office' }
 }
 
 $names = if ($Only) { $Only } else { @($targets.Keys) }

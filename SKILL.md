@@ -158,6 +158,20 @@ net-sftp rm deploy@10.0.2.74 /opt/app/old -r
 
 主机密钥默认按 `~/.ssh/known_hosts` 校验；首次连接打印指纹后继续，`--strict` 要求必须已存在，`--insecure` 才完全跳过。
 
+### 文档办公（Word / Excel / PPT / PDF）
+
+`file-office` 读写 docx / xlsx / pptx / pdf / md，不需要 Office、WPS 或 pandoc：
+
+```bash
+file-office info    report.docx                  # 格式 / 页表数 / 元数据（JSON）
+file-office text    report.docx                  # 纯文本
+file-office md      report.docx -o report.md     # 转 Markdown（默认剥离内联图片）
+file-office convert sales.xlsx out.pdf           # 按输出扩展名转换
+file-office fill    contract.docx vars.json -o out.docx   # 模板填充 {{key}} / {{#each}}
+```
+
+限制：`.doc` / `.xls` 只读；Word / PDF 不能输出 xlsx；PPT → Word 只保留文本结构；PDF 中文依赖系统 TrueType 字体（Linux 容器需装 Noto）。详见 [reference/office.md](reference/office.md)。
+
 ## 输出格式
 
 SQL 类数据库支持 `-o json|csv|table`（默认 JSON）；MongoDB 只有 `json` / `table`。
@@ -215,6 +229,7 @@ SQLite / DuckDB 的 `-f` 支持多条 DDL/DML，执行方式由**首关键字**�
 
 - **完整参数格式**（每个库的 `query` / `connect` 签名、SQLite 专属选项、通用参数）：[reference/cli.md](reference/cli.md)
 - **SSH / SFTP**（认证、主机密钥校验、递归传输、常见错误）：[reference/net.md](reference/net.md)
+- **文档办公**（Word / Excel / PPT / PDF / Markdown 的读写、转换与模板填充）：[reference/office.md](reference/office.md)
 - **各库特性**（连接参数、类型映射、专有行为、已知限制）：[reference/databases.md](reference/databases.md)
 - **重新构建制品**（`bin/` 被误删时、三平台入口、SDK 与 ICU 策略）：[reference/build.md](reference/build.md)
 

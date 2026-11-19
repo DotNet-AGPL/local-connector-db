@@ -57,7 +57,7 @@ rebuild.bat verify all         # 只校验三平台
 源码在 `src/`，每个库一个项目：
 
 ```bash
-.\build.ps1 -Only <sqlite|mysql|postgres|duckdb|clickhouse|redis|dm|mongo|sqlserver|oracle|ssh|sftp>
+.\build.ps1 -Only <sqlite|mysql|postgres|duckdb|clickhouse|redis|dm|mongo|sqlserver|oracle|ssh|sftp|office>
 .\build.ps1 -Only mysql -Rid linux-x64 -Clean
 .\build.ps1 -Only sqlite -Rid osx-arm64
 .\build.ps1 -Skip sqlserver,dm        # 跳过指定库
@@ -75,7 +75,7 @@ rebuild.bat verify all         # 只校验三平台
 
 ## macOS 注意事项
 
-- `osx-arm64` 的 12 个制品已在 Windows 上交叉构建通过（`.NET 11.0.100`）；尚未在 macOS 真机上运行验证
+- `osx-arm64` 的 13 个制品已在 macOS 原生 runner 上构建并通过冒烟；跨机器拷贝后仍需 `xattr -dr com.apple.quarantine`
 - 从别的机器拷贝/下载的产物会带 quarantine 标记，首次运行前执行：
   `xattr -dr com.apple.quarantine bin/<db>-osx-arm64`
 - 不需要安装 Xcode：`MacOSX.SDK` 由 PublishAotCross 自动引入，仅提供链接所需的 SDK 子集
@@ -104,7 +104,7 @@ Actions artifact 会丢文件权限，所以 `pack.ps1` 在打包前显式 `chmo
 
 ### 发布粒度
 
-一个版本出 49 个资产：12 个工具 × 4 种组合 + `SHA256SUMS.txt`。
+一个版本出 53 个资产：13 个工具 × 4 种组合 + `SHA256SUMS.txt`。
 
 | 文件名 | 内容 |
 |---|---|
@@ -118,8 +118,8 @@ Actions artifact 会丢文件权限，所以 `pack.ps1` 在打包前显式 `chmo
 本地出包：
 
 ```bash
-.\pack.ps1 -Mode platform -Rid win-x64 -Version 1.0.0 -SmokeTest   # 12 个单平台包
-.\pack.ps1 -Mode all      -Version 1.0.0 -SmokeTest               # 12 个三平台包
+.\pack.ps1 -Mode platform -Rid win-x64 -Version 1.0.0 -SmokeTest   # 13 个单平台包
+.\pack.ps1 -Mode all      -Version 1.0.0 -SmokeTest               # 13 个三平台包
 .\pack.ps1 -Mode both     -Version 1.0.0 -Tools sqlite,mysql      # 指定工具
 ```
 

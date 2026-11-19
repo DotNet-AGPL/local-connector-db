@@ -24,7 +24,7 @@ cd "$(dirname "$0")" || exit 1
 # 工具表：<目录名前缀>:<可执行文件名>
 TOOLS=(sqlite:db-sqlite mysql:db-mysql postgres:db-postgres duckdb:db-duckdb
        clickhouse:db-clickhouse redis:db-redis dm:db-dm mongo:db-mongo
-       sqlserver:db-sqlserver oracle:db-oracle ssh:net-ssh sftp:net-sftp)
+       sqlserver:db-sqlserver oracle:db-oracle ssh:net-ssh sftp:net-sftp office:file-office)
 
 detect_host_rid() {
     local kernel machine
