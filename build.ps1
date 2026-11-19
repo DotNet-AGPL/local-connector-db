@@ -135,6 +135,37 @@ foreach ($name in $names) {
 
     $watch.Stop()
 
+    # NativeAOT 产物默认带符号表（macOS 还会额外生成 .dSYM）。发布前剥离，Linux/macOS 用系统 strip。
+    # Windows PE 在 DebugType=none 下已无独立符号，跳过。
+    $exePath = Join-Path $outDir ($target.Exe + $(if ($Rid -eq 'win-x64') { '.exe' } else { '' }))
+
+    if ($Rid -ne 'win-x64' -and (Test-Path $exePath)) {
+        $before = (Get-Item $exePath).Length
+
+        if (Get-Command strip -ErrorAction SilentlyContinue) {
+            if ($IsMacOS) {
+                & strip -x $exePath 2>$null
+            }
+            else {
+                & strip --strip-unneeded $exePath 2>$null
+            }
+
+            if ($LASTEXITCODE -eq 0) {
+                $after = (Get-Item $exePath).Length
+                Write-Host ("    strip {0} -> {1:N1} MB（-{2:P0}）" -f $target.Exe, ($after / 1MB), (1 - $after / $before))
+            }
+            else {
+                Write-Warning ("strip 失败（{0}），保留原产物" -f $Rid)
+            }
+        }
+        else {
+            Write-Warning ("未找到 strip，跳过符号剥离（{0}）" -f $Rid)
+        }
+    }
+
+    # 剥离后 dSYM 已无意义，不再随目录分发
+    Get-ChildItem $outDir -Directory -Filter '*.dSYM' -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force
+
     Get-ChildItem $outDir -Filter '*.pdb' -File | Remove-Item -Force -ErrorAction SilentlyContinue
 
     $lines = New-Object System.Collections.Generic.List[string]

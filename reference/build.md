@@ -102,6 +102,7 @@ git push origin v1.0.0
 
 Actions artifact 会丢文件权限，所以 `pack.ps1` 在打包前显式 `chmod`（可执行 755，其余 644，目录 755），不依赖构建机残留。
 打包时会剔除调试产物：`*.pdb` 与 macOS 原生构建自动生成的 `*.dSYM`（后者可达二进制的两倍，纯属负担）。
+更早一步，`build.ps1` 在 publish 成功后直接调用系统 `strip`（Linux `--strip-unneeded`、macOS `-x`），所以 Linux/macOS 制品在算 SHA256 之前就已经剥掉符号；Windows PE 在 `DebugType=none` 下本就没有符号表。交叉构建且宿主没有 `strip` 时只告警、不失败，发布仍以 CI 原生构建为准。
 
 ### 发布粒度
 
