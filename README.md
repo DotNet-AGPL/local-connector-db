@@ -48,17 +48,22 @@ bin/                        # 构建产物（不入库，见下）
 
 ## 从 Release 安装（不需要源码）
 
-发布包只包含运行所需文件（`SKILL.md`、`reference/`、`LICENSE`、`SOURCE.md`、`bin/`），解压放到 Agent 的 skills 目录即可：
+发布包按工具拆分，每个包都带完整的 `SKILL.md` / `reference/` / `LICENSE` / `SOURCE.md`，只含对应工具的 `bin/`。装几个解压几个，解压到同一目录即可叠加：
 
 ```bash
-# Linux / macOS
-tar -xzf local-skill-tools-v1.0.0-linux-x64.tar.gz -C ~/.agents/skills/
+# Linux / macOS：单平台包
+tar -xzf local-skill-tools-v1.0.0-mysql-linux-x64.tar.gz -C ~/.agents/skills/
 
-# Windows PowerShell
-Expand-Archive local-skill-tools-v1.0.0-win-x64.zip -DestinationPath "$env:USERPROFILE\.agents\skills"
+# 三平台包（win + linux + osx，Win10+ 可用 tar -xzf）
+tar -xzf local-skill-tools-v1.0.0-mysql-all.tar.gz -C ~/.agents/skills/
+
+# Windows：单平台包是 zip
+Expand-Archive local-skill-tools-v1.0.0-mysql-win-x64.zip -DestinationPath "$env:USERPROFILE\.agents\skills"
 ```
 
-macOS 首次运行前还需 `xattr -dr com.apple.quarantine ~/.agents/skills/local-skill-tools/bin`（未签名二进制会被 Gatekeeper 拦）。校验下载完整性：`sha256sum -c SHA256SUMS.txt`。
+命名规则：`local-skill-tools-v<版本>-<工具>-<rid|all>.<zip|tar.gz>`，工具取值与 `SKILL.md` 表格一致（`sqlite`、`mysql`、`duckdb`、`ssh`、`sftp` 等）。
+
+macOS 首次运行前还需 `xattr -dr com.apple.quarantine ~/.agents/skills/local-skill-tools/bin`（未签名二进制会被 Gatekeeper 拦）。校验完整性：`sha256sum -c SHA256SUMS.txt`。
 
 ## 安装为 Skill
 

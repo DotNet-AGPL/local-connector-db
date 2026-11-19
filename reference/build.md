@@ -88,25 +88,39 @@ rebuild.bat verify all         # 只校验三平台
 
 ## 发布流水线
 
-打 tag 即发布，`.github/workflows/release.yml` 在三个原生 runner 上构建（`windows-latest` / `ubuntu-22.04` / `macos-14`），不依赖交叉编译：
+打 tag 即发布，`.github/workflows/release.yml` 在三个原生 runner 上构建（`windows-latest` / `ubuntu-22.04` / `macos-latest`），不依赖交叉编译：
 
 ```bash
 git tag v1.0.0
 git push origin v1.0.0
 ```
 
-每个平台跑 `bash rebuild.sh <rid>` → `verify` → `pack.ps1`（含解包冒烟）→ 上传资产。本地出包：
+流程：
+
+1. `build`（3 个 OS）：`rebuild.sh <rid>` → `verify` → `pack.ps1 -Mode platform -Rid <rid> -SmokeTest`，上传单平台包与原始 `bin/`
+2. `publish`（ubuntu）：汇总三平台 `bin/` → `pack.ps1 -Mode all` 合成三平台包 → 对 sqlite/duckdb 冒烟 → 生成 `SHA256SUMS.txt` 与安装说明 → 建 release
+
+Actions artifact 会丢文件权限，所以 `pack.ps1` 在打包前显式 `chmod`（可执行 755，其余 644，目录 755），不依赖构建机残留。
+
+### 发布粒度
+
+一个版本出 49 个资产：12 个工具 × 4 种组合 + `SHA256SUMS.txt`。
+
+| 文件名 | 内容 |
+|---|---|
+| `local-skill-tools-v1.0.0-sqlite-all.tar.gz` | 三平台（win + linux + osx） |
+| `local-skill-tools-v1.0.0-sqlite-win-x64.zip` | 单平台，Windows |
+| `local-skill-tools-v1.0.0-sqlite-linux-x64.tar.gz` | 单平台 |
+| `local-skill-tools-v1.0.0-sqlite-osx-arm64.tar.gz` | 单平台 |
+
+每个包都是完整 skill（`SKILL.md` / `reference/` / `LICENSE` / `SOURCE.md` + 一个 `bin/<tool>-<rid>/`），解压到同一目录即可叠加，缺工具的语义由 `SKILL.md` 明确约束。
+
+本地出包：
 
 ```bash
-.\pack.ps1 -Rid win-x64 -Version 1.0.0 -SmokeTest
+.\pack.ps1 -Mode platform -Rid win-x64 -Version 1.0.0 -SmokeTest   # 12 个单平台包
+.\pack.ps1 -Mode all      -Version 1.0.0 -SmokeTest               # 12 个三平台包
+.\pack.ps1 -Mode both     -Version 1.0.0 -Tools sqlite,mysql      # 指定工具
 ```
-
-包结构刻意只含运行所需文件：
-
-- `SKILL.md`、`reference/`、`README.md`、`LICENSE`、`SOURCE.md`
-- `bin/<tool>-<rid>/`（只含当前平台，含 `BUILD-INFO.txt` 与原生依赖）
-- 不含 `src/`、`tests/`、构建脚本
-
-Windows 出 `.zip`；Linux / macOS 出 `.tar.gz`（zip 在 Windows 上打包会丢执行位）。`SOURCE.md` 写明同版本源码地址，满足 AGPL 对二进制分发的要求。
 
 不要在 Windows 上为 Linux / macOS 出包：tar 拿不到可执行位，`pack.ps1` 会给出警告。正式发布一律走 CI 的原生 runner。

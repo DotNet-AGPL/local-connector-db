@@ -39,12 +39,22 @@ macOS 列对应 Apple Silicon（`osx-arm64`）。发布包只带构建机对应�
 
 ## 安装
 
-发布包解压后就是一个完整的 skill 目录，放到 Agent 的 skills 路径即可：
+发布包按**工具**拆分，每个包都是完整 skill，解压到同一个目录即可叠加安装：
 
 ```bash
-tar -xzf local-skill-tools-v1.0.0-linux-x64.tar.gz -C ~/.agents/skills/
-# Windows：解压 zip，把 local-skill-tools\ 移到 %USERPROFILE%\.agents\skills\
+# 只装当前平台
+tar -xzf local-skill-tools-v1.0.0-sqlite-linux-x64.tar.gz -C ~/.agents/skills/
+
+# 或装三平台包（含 win/linux/osx；Windows 用 tar -xzf 解压）
+tar -xzf local-skill-tools-v1.0.0-sqlite-all.tar.gz -C ~/.agents/skills/
+
+# Windows 单平台包是 zip
+Expand-Archive local-skill-tools-v1.0.0-sqlite-win-x64.zip -DestinationPath "$env:USERPROFILE\.agents\skills"
 ```
+
+安装多个工具就是重复解压对应包（同名 `SKILL.md` 内容一致，覆盖无副作用）。
+
+**若 `bin/<tool>-<rid>/` 不存在，说明该工具没有安装**：直接告知用户需要下载对应工具的包，不要改用其他数据库工具或猜测替代方案。
 
 macOS 下载的二进制带 quarantine 标记，首次运行前执行 `xattr -dr com.apple.quarantine ~/.agents/skills/local-skill-tools/bin`。
 

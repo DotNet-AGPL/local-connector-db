@@ -42,7 +42,7 @@ jobs:
       matrix:
         include:
           # ubuntu-22.04 取 glibc 2.35 作为兼容基线，别换成 latest
-          # macos-14 已被 GitHub 下线（报 configuration not supported），用 latest 跟随可用的 arm64 镜像
+          # macos-14 已被 GitHub 下线（configuration not supported），用 latest 跟随可用的 arm64 镜像
           - os: windows-latest
             rid: win-x64
           - os: ubuntu-22.04
@@ -71,17 +71,25 @@ jobs:
         shell: bash
         run: bash rebuild.sh verify
 
-      - name: 打发布包 + 冒烟
+      - name: 打单平台包 + 冒烟
         shell: pwsh
-        run: ./pack.ps1 -Rid ${{ matrix.rid }} -Version "${{ needs.meta.outputs.version }}" -SmokeTest
+        run: ./pack.ps1 -Mode platform -Rid ${{ matrix.rid }} -Version "${{ needs.meta.outputs.version }}" -SmokeTest
 
-      - uses: actions/upload-artifact@v4
+      - name: 上传单平台包
+        uses: actions/upload-artifact@v4
         with:
-          name: release-${{ matrix.rid }}
+          name: pkg-${{ matrix.rid }}
           path: |
             artifacts/local-skill-tools-*.zip
             artifacts/local-skill-tools-*.tar.gz
-            artifacts/local-skill-tools-*.sha256
+          if-no-files-found: error
+
+      # 三平台包只能在 publish 里合成；artifact 会丢执行位，届时统一 chmod
+      - name: 上传原始产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: bins-${{ matrix.rid }}
+          path: bin/
           if-no-files-found: error
 
   publish:
@@ -89,22 +97,76 @@ jobs:
     needs: [meta, build]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
         with:
+          dotnet-version: 11.0.100
+
+      - name: 下载单平台包
+        uses: actions/download-artifact@v4
+        with:
+          pattern: pkg-*
           path: artifacts
           merge-multiple: true
 
-      - name: 生成 SHA256SUMS
+      - name: 下载三平台原始产物
+        uses: actions/download-artifact@v4
+        with:
+          pattern: bins-*
+          path: bin
+          merge-multiple: true
+
+      - name: 合成三平台包（chmod 由打包脚本统一处理）
+        shell: pwsh
+        run: ./pack.ps1 -Mode all -Version "${{ needs.meta.outputs.version }}"
+
+      - name: 三平台包冒烟（linux 实跑）
+        shell: pwsh
+        run: ./pack.ps1 -Mode all -Version "${{ needs.meta.outputs.version }}" -Tools sqlite,duckdb -SmokeTest
+
+      - name: 生成 SHA256SUMS 与 release 说明
+        shell: pwsh
         run: |
-          cd artifacts
-          sha256sum local-skill-tools-*.zip local-skill-tools-*.tar.gz > SHA256SUMS.txt
-          cat SHA256SUMS.txt
+          $version = "${{ needs.meta.outputs.version }}"
+
+          Push-Location artifacts
+          Get-ChildItem -File | Where-Object { $_.Name -match '\.(zip|tar\.gz)$' } |
+            ForEach-Object { '{0}  {1}' -f (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant(), $_.Name } |
+            Set-Content SHA256SUMS.txt -Encoding utf8
+          Pop-Location
+
+          $tools = @('sqlite', 'mysql', 'postgres', 'duckdb', 'clickhouse', 'redis',
+                     'dm', 'mongo', 'sqlserver', 'oracle', 'ssh', 'sftp')
+
+          $lines = [System.Collections.Generic.List[string]]::new()
+          $lines.Add('## 安装')
+          $lines.Add('')
+          $lines.Add('解压到 `~/.agents/skills/`。每个包都是完整 skill，可以只装需要的工具，也可以叠加安装：')
+          $lines.Add('')
+          $lines.Add('```bash')
+          $lines.Add('tar -xzf local-skill-tools-v' + $version + '-sqlite-linux-x64.tar.gz -C ~/.agents/skills/')
+          $lines.Add('```')
+          $lines.Add('')
+          $lines.Add('Windows 的单平台包是 zip；`-all` 三平台包统一是 tar.gz（Win10+ 可用 `tar -xzf` 解压）。')
+          $lines.Add('')
+          $lines.Add('| 工具 | 三平台 | win-x64 | linux-x64 | osx-arm64 |')
+          $lines.Add('|---|---|---|---|---|')
+
+          foreach ($tool in $tools) {
+            $prefix = "local-skill-tools-v$version-$tool"
+            $lines.Add(('| {0} | `{1}-all.tar.gz` | `{1}-win-x64.zip` | `{1}-linux-x64.tar.gz` | `{1}-osx-arm64.tar.gz` |' -f $tool, $prefix))
+          }
+
+          $lines.Add('')
+          $lines.Add('校验下载：`sha256sum -c SHA256SUMS.txt`。')
+          $lines -join "`n" | Set-Content release-body.md -Encoding utf8
 
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ needs.meta.outputs.version }}
           name: local-skill-tools v${{ needs.meta.outputs.version }}
-          generate_release_notes: true
+          body_path: release-body.md
           fail_on_unmatched_files: true
           files: |
             artifacts/local-skill-tools-*.zip
