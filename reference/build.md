@@ -101,6 +101,7 @@ git push origin v1.0.0
 2. `publish`（ubuntu）：汇总三平台 `bin/` → `pack.ps1 -Mode all` 合成三平台包 → 对 sqlite/duckdb 冒烟 → 生成 `SHA256SUMS.txt` 与安装说明 → 建 release
 
 Actions artifact 会丢文件权限，所以 `pack.ps1` 在打包前显式 `chmod`（可执行 755，其余 644，目录 755），不依赖构建机残留。
+打包时会剔除调试产物：`*.pdb` 与 macOS 原生构建自动生成的 `*.dSYM`（后者可达二进制的两倍，纯属负担）。
 
 ### 发布粒度
 

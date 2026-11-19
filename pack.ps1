@@ -165,8 +165,12 @@ function New-Package {
 
     foreach ($targetRid in $TargetRids) {
         Copy-Item (Join-Path $root ("bin/{0}-{1}" -f $Tool, $targetRid)) (Join-Path $pkgRoot 'bin') -Recurse
-        Get-ChildItem (Join-Path $pkgRoot 'bin' ("{0}-{1}" -f $Tool, $targetRid)) -Filter '*.pdb' -File -ErrorAction SilentlyContinue |
-            Remove-Item -Force
+
+        $toolDir = Join-Path (Join-Path $pkgRoot 'bin') ("{0}-{1}" -f $Tool, $targetRid)
+
+        # 调试产物不随包分发：pdb 与 macOS 的 dSYM（原生构建会自动生成，体积可达二进制两倍）
+        Get-ChildItem $toolDir -Filter '*.pdb' -File -Recurse -ErrorAction SilentlyContinue | Remove-Item -Force
+        Get-ChildItem $toolDir -Directory -Filter '*.dSYM' -Recurse -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force
     }
 
     $sourceNotes = @"
