@@ -142,6 +142,7 @@ SQLite / DuckDB 的 `-f` 支持多条 DDL/DML，执行方式由**首关键字**�
 ## 注意事项
 
 - 密码含特殊字符时用引号包裹；敏感信息不要硬编码在脚本里
+- 含反引号、`$`、`!` 或较长的 SQL 用 `-f script.sql` 或 `-f -`（stdin）传入，避免 shell 破坏语句；`-q` 只适合单行简单查询
 - 查询执行后自动关闭连接
 - 大量数据查询加 `LIMIT`
 - SQLite 与 DuckDB 无需网络，直接操作本地文件；SQLite 写操作默认自动 checkpoint，备份前建议先跑 `--checkpoint`

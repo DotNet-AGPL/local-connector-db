@@ -126,4 +126,30 @@ db-duckdb connect <file.duckdb>
 | `-c, --command` | 命令语句 | MongoDB、Redis |
 | `-p, --port` | 端口号 | 所有网络数据库 |
 | `-o, --output` | 输出格式（json/csv/table） | SQL 数据库；MongoDB 仅 json/table |
-| `-f, --file` | 从文件读取 SQL | SQL 数据库 |
+| `-f, --file` | 从文件读取 SQL；`-f -` 表示从标准输入读取 | SQL 数据库 |
+
+### `-f` / `-f -`：复杂 SQL 的首选写法
+
+`-q` 的 SQL 会先经过 shell 解析，反引号（命令替换）、`$`（变量）、`!`（历史展开）都可能被吃掉，跨平台行为还不一致。含反引号标识符、特殊字符或较长语句时，改用文件或标准输入：
+
+```bash
+# 文件
+db-mysql query host user pass db -f query.sql
+
+# 标准输入（heredoc，shell 侧零解析）
+db-mysql query host user pass db -f - <<'SQL'
+SELECT `procurement_orderNo` FROM orders LIMIT 10;
+SQL
+
+# 管道（Windows PowerShell 同样可用）
+'SELECT 1 AS v' | db-sqlite.exe query app.db -f - -o json
+```
+
+语义：
+
+- 整个输入作为一条命令提交，可包含多条语句
+- 多语句时**只输出第一个结果集**，其余语句照常执行（会打印一行提示）
+- 输入为空（0 字节）时保持原有报错「请提供 SQL 查询语句」
+- `-f -` 在交互终端下无输入会阻塞，脚本里务必重定向
+
+MongoDB 与 Redis 没有 `-f`，它们用 `-c` 传命令。

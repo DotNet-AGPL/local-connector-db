@@ -29,6 +29,10 @@
 - `TINYINT(1)` 映射为布尔（非 0 即 true）；需要原始数值请改用 `TINYINT(2)` 及以上或 `CAST`；`BIT(1)` → `0/1`，`BIT(8)` → `0-255`
 - `JSON` 列直接内联为对象/数组；`DECIMAL` 输出数字而非字符串
 - 查询/更新结果判定基于结果集而非 SQL 文本：有列即为查询，否则输出 `影响 N 行` 与 `新插入记录 ID`
+- 列名标识符：混合大小写、保留字或含特殊字符时统一用反引号（`` `procurement_orderNo` ``）；名字本身含反引号时写成 ```` `` ````
+- MySQL 的列名本身大小写不敏感（`lower_case_table_names` 只影响库名/表名），遇到 `Unknown column` 先核对拼写与下划线，用 `SHOW COLUMNS FROM t LIKE '%procure%'` 或查 `information_schema.columns` 确认实际列名
+- 中间层（TiDB / OceanBase / 代理 / 云厂商 DMS）可能有大小写或引号规则的额外差异，跨层排查时以 `SHOW COLUMNS` 结果为准
+- 反引号在 bash 里是命令替换：`-q "SELECT `col` ..."` 会被 shell 破坏。含反引号的 SQL 用单引号包裹，或直接走 `-f script.sql` / `-f -`（推荐，见 [cli.md](cli.md)）
 
 ## PostgreSQL
 

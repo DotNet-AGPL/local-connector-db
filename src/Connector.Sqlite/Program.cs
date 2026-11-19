@@ -18,7 +18,7 @@ internal static class SqliteCli
 {
     private const string QueryUsage =
         "用法: db-sqlite query <database.db> -q \"SQL\" [-o json|csv|table] [--readonly] [--checkpoint] [--no-checkpoint]\n" +
-        "      db-sqlite query <database.db> -f script.sql\n" +
+        "      db-sqlite query <database.db> -f script.sql|-\n" +
         "      db-sqlite query <database.db> --checkpoint";
 
     private static readonly OptionDef[] QueryOptions =
@@ -91,13 +91,20 @@ internal static class SqliteCli
 
         if (scriptFile is not null)
         {
-            if (!File.Exists(scriptFile))
+            if (scriptFile == "-")
+            {
+                // 从 stdin 读整段 SQL：完全绕过 shell 解析，反引号 / $ / ! 都不会被吞
+                sql = Console.In.ReadToEnd();
+            }
+            else if (!File.Exists(scriptFile))
             {
                 ConsoleOut.Error($"错误: SQL 文件不存在: {scriptFile}");
                 return 1;
             }
-
-            sql = File.ReadAllText(scriptFile);
+            else
+            {
+                sql = File.ReadAllText(scriptFile);
+            }
         }
 
         if (!File.Exists(databasePath))

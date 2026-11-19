@@ -20,7 +20,7 @@ internal static class DuckDbCli
 
     private const string QueryUsage =
         "用法: db-duckdb query <file.duckdb> -q \"SQL\" [-o json|csv|table] [--readonly]\n" +
-        "      db-duckdb query <file.duckdb> -f script.sql\n" +
+        "      db-duckdb query <file.duckdb> -f script.sql|-\n" +
         "      db-duckdb query :memory: -q \"SQL\"";
 
     private static readonly OptionDef[] QueryOptions =
@@ -94,13 +94,20 @@ internal static class DuckDbCli
 
         if (scriptFile is not null)
         {
-            if (!File.Exists(scriptFile))
+            if (scriptFile == "-")
+            {
+                // 从 stdin 读整段 SQL：完全绕过 shell 解析，反引号 / $ / ! 都不会被吞
+                sql = Console.In.ReadToEnd();
+            }
+            else if (!File.Exists(scriptFile))
             {
                 ConsoleOut.Error($"错误: SQL 文件不存在: {scriptFile}");
                 return 1;
             }
-
-            sql = File.ReadAllText(scriptFile);
+            else
+            {
+                sql = File.ReadAllText(scriptFile);
+            }
         }
 
         var isMemory = string.Equals(databasePath, MemoryDatabase, StringComparison.Ordinal);

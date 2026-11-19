@@ -20,7 +20,7 @@ internal static class OracleCli
 {
     private const string QueryUsage =
         "用法: db-oracle query <host> <user> <password> <service> [-p port] -q \"SQL\" [-o json|csv|table]\n" +
-        "      db-oracle query <host> <user> <password> <service> [-p port] -f script.sql";
+        "      db-oracle query <host> <user> <password> <service> [-p port] -f script.sql|-";
 
     private static readonly OptionDef[] QueryOptions =
     [
@@ -92,13 +92,20 @@ internal static class OracleCli
 
         if (scriptFile is not null)
         {
-            if (!File.Exists(scriptFile))
+            if (scriptFile == "-")
+            {
+                // 从 stdin 读整段 SQL：完全绕过 shell 解析，反引号 / $ / ! 都不会被吞
+                sql = Console.In.ReadToEnd();
+            }
+            else if (!File.Exists(scriptFile))
             {
                 ConsoleOut.Error($"错误: SQL 文件不存在: {scriptFile}");
                 return 1;
             }
-
-            sql = File.ReadAllText(scriptFile);
+            else
+            {
+                sql = File.ReadAllText(scriptFile);
+            }
         }
 
         if (sql.Trim().Length == 0)
