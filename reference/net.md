@@ -62,6 +62,29 @@ net-ssh exec root@10.0.2.74 -i ~/.ssh/id_ed25519 -f deploy.sh
 
 输出是整段缓冲后写出的：命令会产生大量输出时，建议在远端自己重定向到文件（`... > /tmp/out.log 2>&1`）。
 
+### 端口转发
+
+`tunnel` 把远端可达的端口映射到本机，用来穿过跳板机访问内网数据库：
+
+```bash
+net-ssh tunnel <user@host> -L [bind:]port:host:hostport [-L ...] [--duration 秒]
+```
+
+- 端口写 0 由系统分配，实际端口在 stderr 的 `listening 127.0.0.1:<port> -> ...` 里给出
+- 默认只绑 `127.0.0.1`；需要对外暴露时显式写 `-L 0.0.0.0:3307:db:3306`
+- `--duration` 控制存活时长（0 = 一直保持，Ctrl+C 结束）；到期或中断后会关闭端口
+- `exec` 也接受 `-L`：隧道随命令生命周期启停，适合「临时查一条再退出」
+
+```bash
+# 跳板机后面的内网 MySQL
+net-ssh tunnel jump@10.0.2.74 -L 3307:10.0.2.15:3306 --duration 600 --password-stdin < pw.txt
+# 另一个终端
+db-mysql query 127.0.0.1 root pw mydb -p 3307 -q "SELECT 1"
+
+# 与命令同生命周期
+net-ssh exec jump@10.0.2.74 -L 3307:10.0.2.15:3306 --password-stdin -- 'mysql -h127.0.0.1 -P3307 -e "SELECT 1"'
+```
+
 ## net-sftp
 
 ```bash

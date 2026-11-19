@@ -32,7 +32,7 @@ description: 用本地 NativeAOT 单文件工具操作数据库与远程服务�
 
 | 工具 | 用途 | Windows 入口 | Linux 入口 | macOS 入口 |
 |------|------|-------------|-----------|-----------|
-| `net-ssh` | 远程执行命令 | `bin/ssh-win-x64/net-ssh.exe` | `bin/ssh-linux-x64/net-ssh` | `bin/ssh-osx-arm64/net-ssh` |
+| `net-ssh` | 远程执行命令、端口转发 | `bin/ssh-win-x64/net-ssh.exe` | `bin/ssh-linux-x64/net-ssh` | `bin/ssh-osx-arm64/net-ssh` |
 | `net-sftp` | 列目录 / 上传 / 下载 / 删除 | `bin/sftp-win-x64/net-sftp.exe` | `bin/sftp-linux-x64/net-sftp` | `bin/sftp-osx-arm64/net-sftp` |
 
 macOS 列对应 Apple Silicon（`osx-arm64`）。发布包只带构建机对应平台的 `bin/`；如果当前目录缺少你所在平台的制品，从 Releases 下载对应包，或在源码仓库跑 `bash rebuild.sh`（按宿主自动选 RID）生成。`sqlserver` 与 `dm` 在非 Windows 平台都走纯托管驱动，不需要额外原生库。
@@ -143,6 +143,10 @@ net-ssh exec root@10.0.2.74 -i ~/.ssh/id_ed25519 -f deploy.sh
 
 # 密码只从标准输入读，不要写在命令行里
 echo "$REMOTE_PASSWORD" | net-ssh exec root@10.0.2.74 --password-stdin -- 'df -h'
+
+# 端口转发：穿过跳板机访问内网库（-L [bind:]port:host:hostport，可重复）
+net-ssh tunnel jump@10.0.2.74 -L 3307:10.0.2.15:3306 --duration 600 --password-stdin < pw.txt
+db-mysql query 127.0.0.1 root pw mydb -p 3307 -q "SELECT 1"
 
 # 上传 / 下载（目录加 -r）
 net-sftp put deploy@10.0.2.74 ./dist /opt/app/dist -r

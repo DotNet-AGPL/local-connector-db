@@ -21,7 +21,7 @@
 
 | 工具 | 用途 | 入口（win / linux） |
 |---|---|---|
-| `net-ssh` | 远程执行命令 | `bin/ssh-win-x64/net-ssh.exe` / `bin/ssh-linux-x64/net-ssh` |
+| `net-ssh` | 远程执行命令、端口转发 | `bin/ssh-win-x64/net-ssh.exe` / `bin/ssh-linux-x64/net-ssh` |
 | `net-sftp` | 列目录、上传、下载、删除 | `bin/sftp-win-x64/net-sftp.exe` / `bin/sftp-linux-x64/net-sftp` |
 
 `net-ssh` 与 `net-sftp` 共享认证与主机密钥校验逻辑（`src/Net.Core`），密码只从标准输入读取。

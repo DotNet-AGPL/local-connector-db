@@ -21,6 +21,7 @@ public sealed class CliArgs
 {
     private readonly List<string> _positionals = [];
     private readonly Dictionary<string, string?> _values = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, List<string>> _multi = new(StringComparer.Ordinal);
 
     public IReadOnlyList<string> Positionals => _positionals;
 
@@ -43,7 +44,16 @@ public sealed class CliArgs
                         throw new UsageException($"参数 {token} 缺少取值");
                     }
 
-                    result._values[def.Name] = args[++i];
+                    var value = args[++i];
+                    result._values[def.Name] = value;
+
+                    if (!result._multi.TryGetValue(def.Name, out var list))
+                    {
+                        list = [];
+                        result._multi[def.Name] = list;
+                    }
+
+                    list.Add(value);
                 }
                 else
                 {
@@ -78,4 +88,8 @@ public sealed class CliArgs
     public bool Has(string name) => _values.ContainsKey(name);
 
     public string? Get(string name) => _values.TryGetValue(name, out var value) ? value : null;
+
+    /// <summary>同名选项的全部取值（按出现顺序），用于 -L 这类可重复的参数。</summary>
+    public IReadOnlyList<string> GetAll(string name) =>
+        _multi.TryGetValue(name, out var values) ? values : [];
 }
