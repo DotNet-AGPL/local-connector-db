@@ -1,6 +1,7 @@
 EXIT: 1
 --- STDOUT ---
-正在执行查询...
+
 --- STDERR ---
+正在执行查询...
 ✗ 查询执行失败: ORA-00900: <msg>
 https://docs.oracle.com/error-help/db/ora-00900/

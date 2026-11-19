@@ -1,5 +1,6 @@
 EXIT: 1
 --- STDOUT ---
-正在执行查询...
+
 --- STDERR ---
+正在执行查询...
 ✗ 查询执行失败: Access denied for user 'root'@'172.17.144.1' (using password: YES)

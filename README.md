@@ -74,6 +74,7 @@ Windows 用 `rebuild.bat`（或双击）。两者都不带参数时自动按宿�
 ## 约定
 
 - `bin/<tool>-<rid>/` 是自包含目录，整目录分发；不要只拷可执行文件。
+- stdout 只有结果数据，进度 / 统计 / 报错都走 stderr，结果可直接管道给 jq 等工具。
 - 切换 RID 构建必须带 `-Clean`（restore 按 RID 走）。
 - 日期时间一律按库中原值输出，不做时区转换；超过 2^53 的整数输出字符串。
 - `osx-arm64` 制品已在 Windows 上交叉构建通过（尚未在 macOS 真机验证）；跨机器拷贝后需 `xattr -dr com.apple.quarantine bin/<tool>-osx-arm64` 才能直接运行。

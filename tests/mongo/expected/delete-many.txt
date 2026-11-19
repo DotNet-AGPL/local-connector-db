@@ -1,14 +1,14 @@
 EXIT: 0
 --- STDOUT ---
+{
+  "deleted": 2
+}
+--- STDERR ---
 正在执行命令: lcdb_users.deleteMany
 
 命令执行完成 (<time>)
 
 --- 结果 ---
 
-{
-  "deleted": 2
-}
 
 ✓ 命令执行成功
---- STDERR ---

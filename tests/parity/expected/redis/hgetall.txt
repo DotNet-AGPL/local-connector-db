@@ -1,17 +1,17 @@
 EXIT: 0
 --- STDOUT ---
-正在执行命令: HGETALL lcdb_test:hash
-
-命令执行完成 (<time>)
-
---- 结果 ---
-
 [
   "f1",
   "v1",
   "f2",
   "2"
 ]
+--- STDERR ---
+正在执行命令: HGETALL lcdb_test:hash
+
+命令执行完成 (<time>)
+
+--- 结果 ---
+
 
 ✓ 命令执行成功
---- STDERR ---

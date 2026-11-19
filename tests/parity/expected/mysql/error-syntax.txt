@@ -1,5 +1,6 @@
 EXIT: 1
 --- STDOUT ---
-正在执行查询...
+
 --- STDERR ---
+正在执行查询...
 ✗ 查询执行失败: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'SELEC 1' at line 1

@@ -1,5 +1,6 @@
 EXIT: 1
 --- STDOUT ---
-正在执行查询...
+
 --- STDERR ---
+正在执行查询...
 ✗ 查询执行失败: database "no_such_db" does not exist

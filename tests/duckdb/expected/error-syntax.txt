@@ -1,7 +1,8 @@
 EXIT: 1
 --- STDOUT ---
-正在执行查询...
+
 --- STDERR ---
+正在执行查询...
 ✗ 查询执行失败: Parser Error: syntax error at or near "SELEC"
 
 LINE 1: SELEC 1

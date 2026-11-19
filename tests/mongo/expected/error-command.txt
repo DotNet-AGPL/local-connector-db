@@ -1,5 +1,6 @@
 EXIT: 1
 --- STDOUT ---
-正在执行命令: db.runCommand
+
 --- STDERR ---
+正在执行命令: db.runCommand
 ✗ 命令执行失败: Command noSuchCommand failed: no such command: 'noSuchCommand'.

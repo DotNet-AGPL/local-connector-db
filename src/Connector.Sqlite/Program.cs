@@ -159,16 +159,16 @@ internal static class SqliteCli
         if (checkpointOnly)
         {
             var (busy, log, checkpointed) = Checkpoint(connection);
-            ConsoleOut.Line(
+            ConsoleOut.Info(
                 $"✓ wal_checkpoint(TRUNCATE) 完成：busy={busy} log={log} checkpointed={checkpointed}（journal_mode={journalMode}）");
             return 0;
         }
 
-        ConsoleOut.Line("正在执行查询...");
+        ConsoleOut.Info("正在执行查询...");
 
         if (walExists)
         {
-            ConsoleOut.Line($"提示: 检测到 WAL 文件（-wal）；本工具按文件路径打开、WAL 感知，读写安全（journal_mode={journalMode}）");
+            ConsoleOut.Info($"提示: 检测到 WAL 文件（-wal）；本工具按文件路径打开、WAL 感知，读写安全（journal_mode={journalMode}）");
         }
 
         var stopwatch = Stopwatch.StartNew();
@@ -208,43 +208,43 @@ internal static class SqliteCli
                 try
                 {
                     var (busy, log, checkpointed) = Checkpoint(connection);
-                    ConsoleOut.Line($"已自动 wal_checkpoint(TRUNCATE)：busy={busy} log={log} checkpointed={checkpointed}");
+                    ConsoleOut.Info($"已自动 wal_checkpoint(TRUNCATE)：busy={busy} log={log} checkpointed={checkpointed}");
                 }
                 catch (Exception error)
                 {
-                    ConsoleOut.Line($"checkpoint 跳过: {error.Message}");
+                    ConsoleOut.Info($"checkpoint 跳过: {error.Message}");
                 }
             }
         }
 
         stopwatch.Stop();
-        ConsoleOut.Line(string.Empty);
-        ConsoleOut.Line($"查询执行完成 ({stopwatch.ElapsedMilliseconds}ms)");
+        ConsoleOut.Info(string.Empty);
+        ConsoleOut.Info($"查询执行完成 ({stopwatch.ElapsedMilliseconds}ms)");
 
         if (!isQuery)
         {
-            ConsoleOut.Line($"影响 {changes ?? 0} 行");
+            ConsoleOut.Info($"影响 {changes ?? 0} 行");
 
             if (lastId > 0)
             {
-                ConsoleOut.Line($"新插入记录 ID: {lastId}");
+                ConsoleOut.Info($"新插入记录 ID: {lastId}");
             }
         }
         else if (rows.Count == 0)
         {
-            ConsoleOut.Line("返回 0 行数据");
+            ConsoleOut.Info("返回 0 行数据");
         }
         else
         {
-            ConsoleOut.Line($"返回 {rows.Count} 行数据");
-            ConsoleOut.Line(string.Empty);
-            ConsoleOut.Line("--- 查询结果 ---");
-            ConsoleOut.Line(string.Empty);
+            ConsoleOut.Info($"返回 {rows.Count} 行数据");
+            ConsoleOut.Info(string.Empty);
+            ConsoleOut.Info("--- 查询结果 ---");
+            ConsoleOut.Info(string.Empty);
             WriteRows(columns, rows, format);
         }
 
-        ConsoleOut.Line(string.Empty);
-        ConsoleOut.Line("✓ 查询执行成功");
+        ConsoleOut.Info(string.Empty);
+        ConsoleOut.Info("✓ 查询执行成功");
         return 0;
     }
 

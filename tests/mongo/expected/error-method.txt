@@ -1,5 +1,6 @@
 EXIT: 1
 --- STDOUT ---
-正在执行命令: lcdb_users.noSuchMethod
+
 --- STDERR ---
+正在执行命令: lcdb_users.noSuchMethod
 ✗ 命令执行失败: 不支持的集合命令: noSuchMethod

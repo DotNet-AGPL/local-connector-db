@@ -137,7 +137,7 @@ internal static class SqlServerCli
     {
         using var connection = Open(endpoint);
 
-        ConsoleOut.Line("正在执行查询...");
+        ConsoleOut.Info("正在执行查询...");
 
         var stopwatch = Stopwatch.StartNew();
         var isQuery = QueryPattern.IsMatch(sql);
@@ -197,31 +197,31 @@ internal static class SqlServerCli
 
         stopwatch.Stop();
 
-        ConsoleOut.Line(string.Empty);
-        ConsoleOut.Line($"查询执行完成 ({stopwatch.ElapsedMilliseconds}ms)");
+        ConsoleOut.Info(string.Empty);
+        ConsoleOut.Info($"查询执行完成 ({stopwatch.ElapsedMilliseconds}ms)");
 
         if (isQuery)
         {
             if (rows.Count == 0)
             {
-                ConsoleOut.Line("返回 0 行数据");
+                ConsoleOut.Info("返回 0 行数据");
             }
             else
             {
-                ConsoleOut.Line($"返回 {rows.Count} 行数据");
-                ConsoleOut.Line(string.Empty);
-                ConsoleOut.Line("--- 查询结果 ---");
-                ConsoleOut.Line(string.Empty);
+                ConsoleOut.Info($"返回 {rows.Count} 行数据");
+                ConsoleOut.Info(string.Empty);
+                ConsoleOut.Info("--- 查询结果 ---");
+                ConsoleOut.Info(string.Empty);
                 WriteRows(columns, rows, format);
             }
         }
         else
         {
-            ConsoleOut.Line($"影响 {affected} 行");
+            ConsoleOut.Info($"影响 {affected} 行");
         }
 
-        ConsoleOut.Line(string.Empty);
-        ConsoleOut.Line("✓ 查询执行成功");
+        ConsoleOut.Info(string.Empty);
+        ConsoleOut.Info("✓ 查询执行成功");
         return 0;
     }
 

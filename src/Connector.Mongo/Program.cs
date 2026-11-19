@@ -110,37 +110,37 @@ internal static class MongoCli
             using var client = Connect(endpoint);
             var database = client.GetDatabase(endpoint.Database);
 
-            ConsoleOut.Line($"正在执行命令: {call.Target}.{call.Method}");
+            ConsoleOut.Info($"正在执行命令: {call.Target}.{call.Method}");
 
             var stopwatch = Stopwatch.StartNew();
             var result = Execute(database, call);
             stopwatch.Stop();
 
-            ConsoleOut.Line(string.Empty);
-            ConsoleOut.Line($"命令执行完成 ({stopwatch.ElapsedMilliseconds}ms)");
+            ConsoleOut.Info(string.Empty);
+            ConsoleOut.Info($"命令执行完成 ({stopwatch.ElapsedMilliseconds}ms)");
 
             if (result is object?[] array && array.Length == 0)
             {
-                ConsoleOut.Line("返回 0 个文档");
+                ConsoleOut.Info("返回 0 个文档");
             }
             else if (result is object?[] documents)
             {
-                ConsoleOut.Line($"返回 {documents.Length} 个文档");
-                ConsoleOut.Line(string.Empty);
-                ConsoleOut.Line("--- 结果 ---");
-                ConsoleOut.Line(string.Empty);
+                ConsoleOut.Info($"返回 {documents.Length} 个文档");
+                ConsoleOut.Info(string.Empty);
+                ConsoleOut.Info("--- 结果 ---");
+                ConsoleOut.Info(string.Empty);
                 WriteDocuments(documents, format);
             }
             else
             {
-                ConsoleOut.Line(string.Empty);
-                ConsoleOut.Line("--- 结果 ---");
-                ConsoleOut.Line(string.Empty);
+                ConsoleOut.Info(string.Empty);
+                ConsoleOut.Info("--- 结果 ---");
+                ConsoleOut.Info(string.Empty);
                 ConsoleOut.Block(JsonText.Value(result));
             }
 
-            ConsoleOut.Line(string.Empty);
-            ConsoleOut.Line("✓ 命令执行成功");
+            ConsoleOut.Info(string.Empty);
+            ConsoleOut.Info("✓ 命令执行成功");
             return 0;
         }
         catch (Exception exception)

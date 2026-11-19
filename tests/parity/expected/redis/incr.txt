@@ -1,12 +1,12 @@
 EXIT: 0
 --- STDOUT ---
+2
+--- STDERR ---
 正在执行命令: INCR lcdb_test:n
 
 命令执行完成 (<time>)
 
 --- 结果 ---
 
-2
 
 ✓ 命令执行成功
---- STDERR ---

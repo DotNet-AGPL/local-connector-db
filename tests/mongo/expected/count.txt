@@ -1,12 +1,12 @@
 EXIT: 0
 --- STDOUT ---
+3
+--- STDERR ---
 正在执行命令: lcdb_users.countDocuments
 
 命令执行完成 (<time>)
 
 --- 结果 ---
 
-3
 
 ✓ 命令执行成功
---- STDERR ---

@@ -1,15 +1,15 @@
 EXIT: 0
 --- STDOUT ---
+{
+  "matched": 2,
+  "modified": 2
+}
+--- STDERR ---
 正在执行命令: lcdb_users.updateMany
 
 命令执行完成 (<time>)
 
 --- 结果 ---
 
-{
-  "matched": 2,
-  "modified": 2
-}
 
 ✓ 命令执行成功
---- STDERR ---

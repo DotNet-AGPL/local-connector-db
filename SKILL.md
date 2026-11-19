@@ -137,7 +137,16 @@ net-sftp rm deploy@10.0.2.74 /opt/app/old -r
 
 SQL 类数据库支持 `-o json|csv|table`（默认 JSON）；MongoDB 只有 `json` / `table`。
 
-- **JSON**：标准 JSON 数组
+**stdout 只有结果数据**：`正在执行查询...`、耗时、行数统计、`✓ 查询执行成功` 等提示一律写 stderr。因此结果可以直接管道给下游，不需要先剔除提示行：
+
+```bash
+db-mysql query db.example.com app pass mydb -q "SELECT id, name FROM t LIMIT 5" | jq -r '.[].name'
+db-sqlite query ./app.db -q "SELECT * FROM t" -o csv | Import-Csv
+```
+
+`connect` 的诊断报告是命令本身的输出，仍走 stdout。
+
+- **JSON**：标准 JSON 数组（`[]` 也可被 jq 直接解析）
 - **CSV**：逗号分隔值，`NULL` 为空串
 - **TABLE**：终端表格，列宽按显示宽度计算（中日韩字符按 2 列对齐）
 
@@ -174,6 +183,7 @@ SQLite / DuckDB 的 `-f` 支持多条 DDL/DML，执行方式由**首关键字**�
 - 含反引号、`$`、`!` 或较长的 SQL 用 `-f script.sql` 或 `-f -`（stdin）传入，避免 shell 破坏语句；`-q` 只适合单行简单查询
 - 查询执行后自动关闭连接
 - 大量数据查询加 `LIMIT`
+- 只要结果、不要提示：`2>/dev/null` 即可；DML 的「影响 N 行」也在 stderr，判断成功与否看退出码
 - SQLite 与 DuckDB 无需网络，直接操作本地文件；SQLite 写操作默认自动 checkpoint，备份前建议先跑 `--checkpoint`
 
 ## 参考

@@ -1,5 +1,9 @@
 EXIT: 0
 --- STDOUT ---
+[
+  "lcdb_users"
+]
+--- STDERR ---
 正在执行命令: db.getCollectionNames
 
 命令执行完成 (<time>)
@@ -7,9 +11,5 @@ EXIT: 0
 
 --- 结果 ---
 
-[
-  "lcdb_users"
-]
 
 ✓ 命令执行成功
---- STDERR ---

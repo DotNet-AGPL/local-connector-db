@@ -95,20 +95,20 @@ internal static class RedisCli
             using var multiplexer = Connect(endpoint);
             var database = multiplexer.GetDatabase(endpoint.Database);
 
-            ConsoleOut.Line($"正在执行命令: {name} {string.Join(' ', arguments)}");
+            ConsoleOut.Info($"正在执行命令: {name} {string.Join(' ', arguments)}");
 
             var stopwatch = Stopwatch.StartNew();
             var result = database.Execute(name, arguments);
             stopwatch.Stop();
 
-            ConsoleOut.Line(string.Empty);
-            ConsoleOut.Line($"命令执行完成 ({stopwatch.ElapsedMilliseconds}ms)");
-            ConsoleOut.Line(string.Empty);
-            ConsoleOut.Line("--- 结果 ---");
-            ConsoleOut.Line(string.Empty);
+            ConsoleOut.Info(string.Empty);
+            ConsoleOut.Info($"命令执行完成 ({stopwatch.ElapsedMilliseconds}ms)");
+            ConsoleOut.Info(string.Empty);
+            ConsoleOut.Info("--- 结果 ---");
+            ConsoleOut.Info(string.Empty);
             WriteResult(result);
-            ConsoleOut.Line(string.Empty);
-            ConsoleOut.Line("✓ 命令执行成功");
+            ConsoleOut.Info(string.Empty);
+            ConsoleOut.Info("✓ 命令执行成功");
             return 0;
         }
         catch (Exception error)

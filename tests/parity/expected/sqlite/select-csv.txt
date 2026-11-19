@@ -1,5 +1,10 @@
 EXIT: 0
 --- STDOUT ---
+id,name,qty,amount
+1,alpha,10,1.5
+2,beta,20,2.25
+3,gamma,-5,
+--- STDERR ---
 正在执行查询...
 
 查询执行完成 (<time>)
@@ -7,10 +12,5 @@ EXIT: 0
 
 --- 查询结果 ---
 
-id,name,qty,amount
-1,alpha,10,1.5
-2,beta,20,2.25
-3,gamma,-5,
 
 ✓ 查询执行成功
---- STDERR ---

@@ -128,6 +128,18 @@ db-duckdb connect <file.duckdb>
 | `-o, --output` | 输出格式（json/csv/table） | SQL 数据库；MongoDB 仅 json/table |
 | `-f, --file` | 从文件读取 SQL；`-f -` 表示从标准输入读取 | SQL 数据库 |
 
+### 输出通道
+
+- **stdout**：只有结果数据（JSON / CSV / table）。可以直接管道：`... | jq`、`... | Import-Csv`。
+- **stderr**：`正在执行查询...`、`查询执行完成 (Nms)`、`返回 N 行数据`、`影响 N 行`、`✓ 查询执行成功` 等进度与统计；报错同样在这里。
+- `connect` 会打印连接概况，它本身就是该命令的输出，因此仍在 stdout。
+- DML 的 stdout 为空：成功与否看退出码，影响行数在 stderr。
+
+```bash
+# 只要数据，丢弃提示
+db-mysql query host user pass db -q "SELECT * FROM t LIMIT 10" 2>/dev/null | jq '.[].id'
+```
+
 ### `-f` / `-f -`：复杂 SQL 的首选写法
 
 `-q` 的 SQL 会先经过 shell 解析，反引号（命令替换）、`$`（变量）、`!`（历史展开）都可能被吃掉，跨平台行为还不一致。含反引号标识符、特殊字符或较长语句时，改用文件或标准输入：

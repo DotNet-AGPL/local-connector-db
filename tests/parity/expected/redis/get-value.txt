@@ -1,12 +1,12 @@
 EXIT: 0
 --- STDOUT ---
+hello
+--- STDERR ---
 正在执行命令: GET lcdb_test:k
 
 命令执行完成 (<time>)
 
 --- 结果 ---
 
-hello
 
 ✓ 命令执行成功
---- STDERR ---
