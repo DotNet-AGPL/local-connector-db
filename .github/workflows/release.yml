@@ -1,0 +1,111 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '版本号（不带 v，例如 1.0.0）'
+        required: true
+        default: '1.0.0'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  meta:
+    name: 版本号
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.resolve.outputs.version }}
+    steps:
+      - id: resolve
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            version="${{ github.event.inputs.version }}"
+          else
+            version="${GITHUB_REF_NAME#v}"
+          fi
+          echo "version=${version#v}" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: ${{ matrix.rid }}
+    needs: meta
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # ubuntu-22.04 取 glibc 2.35 作为兼容基线，别换成 latest
+          - os: windows-latest
+            rid: win-x64
+          - os: ubuntu-22.04
+            rid: linux-x64
+          - os: macos-14
+            rid: osx-arm64
+    runs-on: ${{ matrix.os }}
+    env:
+      DOTNET_VERSION: 11.0.100
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Linux 构建依赖（NativeAOT 需要 clang / zlib）
+        if: matrix.rid == 'linux-x64'
+        run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
+
+      - name: 构建 12 个工具
+        shell: bash
+        run: bash rebuild.sh ${{ matrix.rid }}
+
+      - name: 校验产物
+        shell: bash
+        run: bash rebuild.sh verify
+
+      - name: 打发布包 + 冒烟
+        shell: pwsh
+        run: ./pack.ps1 -Rid ${{ matrix.rid }} -Version "${{ needs.meta.outputs.version }}" -SmokeTest
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ matrix.rid }}
+          path: |
+            artifacts/local-skill-tools-*.zip
+            artifacts/local-skill-tools-*.tar.gz
+            artifacts/local-skill-tools-*.sha256
+          if-no-files-found: error
+
+  publish:
+    name: 发布
+    needs: [meta, build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: 生成 SHA256SUMS
+        run: |
+          cd artifacts
+          sha256sum local-skill-tools-*.zip local-skill-tools-*.tar.gz > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.meta.outputs.version }}
+          name: local-skill-tools v${{ needs.meta.outputs.version }}
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          files: |
+            artifacts/local-skill-tools-*.zip
+            artifacts/local-skill-tools-*.tar.gz
+            artifacts/SHA256SUMS.txt

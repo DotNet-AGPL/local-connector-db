@@ -85,3 +85,28 @@ rebuild.bat verify all         # 只校验三平台
 ## 产物说明
 
 产物落到 `bin/<db>-<rid>/`，目录内 `BUILD-INFO.txt` 记录 SDK 版本、构建时间与各文件 SHA256。
+
+## 发布流水线
+
+打 tag 即发布，`.github/workflows/release.yml` 在三个原生 runner 上构建（`windows-latest` / `ubuntu-22.04` / `macos-14`），不依赖交叉编译：
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+每个平台跑 `bash rebuild.sh <rid>` → `verify` → `pack.ps1`（含解包冒烟）→ 上传资产。本地出包：
+
+```bash
+.\pack.ps1 -Rid win-x64 -Version 1.0.0 -SmokeTest
+```
+
+包结构刻意只含运行所需文件：
+
+- `SKILL.md`、`reference/`、`README.md`、`LICENSE`、`SOURCE.md`
+- `bin/<tool>-<rid>/`（只含当前平台，含 `BUILD-INFO.txt` 与原生依赖）
+- 不含 `src/`、`tests/`、构建脚本
+
+Windows 出 `.zip`；Linux / macOS 出 `.tar.gz`（zip 在 Windows 上打包会丢执行位）。`SOURCE.md` 写明同版本源码地址，满足 AGPL 对二进制分发的要求。
+
+不要在 Windows 上为 Linux / macOS 出包：tar 拿不到可执行位，`pack.ps1` 会给出警告。正式发布一律走 CI 的原生 runner。

@@ -35,7 +35,18 @@ description: 用本地 NativeAOT 单文件工具操作数据库与远程服务�
 | `net-ssh` | 远程执行命令 | `bin/ssh-win-x64/net-ssh.exe` | `bin/ssh-linux-x64/net-ssh` | `bin/ssh-osx-arm64/net-ssh` |
 | `net-sftp` | 列目录 / 上传 / 下载 / 删除 | `bin/sftp-win-x64/net-sftp.exe` | `bin/sftp-linux-x64/net-sftp` | `bin/sftp-osx-arm64/net-sftp` |
 
-macOS 列对应 Apple Silicon（`osx-arm64`）：仓库不预置该平台制品，在 Mac 上首次使用前跑 `bash rebuild.sh`（按宿主自动选 RID）生成。该平台已在 Windows 上交叉构建通过，但尚未在 macOS 真机上运行验证。`sqlserver` 与 `dm` 在非 Windows 平台都走纯托管驱动，不需要额外原生库。
+macOS 列对应 Apple Silicon（`osx-arm64`）。发布包只带构建机对应平台的 `bin/`；如果当前目录缺少你所在平台的制品，从 Releases 下载对应包，或在源码仓库跑 `bash rebuild.sh`（按宿主自动选 RID）生成。`sqlserver` 与 `dm` 在非 Windows 平台都走纯托管驱动，不需要额外原生库。
+
+## 安装
+
+发布包解压后就是一个完整的 skill 目录，放到 Agent 的 skills 路径即可：
+
+```bash
+tar -xzf local-skill-tools-v1.0.0-linux-x64.tar.gz -C ~/.agents/skills/
+# Windows：解压 zip，把 local-skill-tools\ 移到 %USERPROFILE%\.agents\skills\
+```
+
+macOS 下载的二进制带 quarantine 标记，首次运行前执行 `xattr -dr com.apple.quarantine ~/.agents/skills/local-skill-tools/bin`。
 
 Linux 侧只有 `sqlserver-linux-x64/` 需要 `libicu*.so`（运行依赖，必须随目录一起分发）。
 

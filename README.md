@@ -41,8 +41,24 @@ src/Net.*/                  # SSH / SFTP 项目与共享库
 tests/                      # 各库联调与 parity 校验
 build.ps1                   # 单工具构建
 rebuild.bat / rebuild.sh    # 全量重建 + 校验
+pack.ps1                    # 组装发布包（只含当前平台制品，可 -SmokeTest）
+.github/workflows/          # tag 触发的三平台 release 流水线
 bin/                        # 构建产物（不入库，见下）
 ```
+
+## 从 Release 安装（不需要源码）
+
+发布包只包含运行所需文件（`SKILL.md`、`reference/`、`LICENSE`、`SOURCE.md`、`bin/`），解压放到 Agent 的 skills 目录即可：
+
+```bash
+# Linux / macOS
+tar -xzf local-skill-tools-v1.0.0-linux-x64.tar.gz -C ~/.agents/skills/
+
+# Windows PowerShell
+Expand-Archive local-skill-tools-v1.0.0-win-x64.zip -DestinationPath "$env:USERPROFILE\.agents\skills"
+```
+
+macOS 首次运行前还需 `xattr -dr com.apple.quarantine ~/.agents/skills/local-skill-tools/bin`（未签名二进制会被 Gatekeeper 拦）。校验下载完整性：`sha256sum -c SHA256SUMS.txt`。
 
 ## 安装为 Skill
 
@@ -69,7 +85,7 @@ Windows 用 `rebuild.bat`（或双击）。两者都不带参数时自动按宿�
 .\build.ps1 -Skip sqlserver,dm
 ```
 
-`bin/` 不纳入版本库：二进制每次重建都会产生新 blob，历史会迅速膨胀。发布时把 `bin/` 打包为 release 资产，或由使用者本地构建。详见 [reference/build.md](reference/build.md)。
+`bin/` 不纳入版本库：二进制每次重建都会产生新 blob，历史会迅速膨胀。发布时用 `pack.ps1` 组装成只含当前平台制品的包（`artifacts/local-skill-tools-v<版本>-<rid>.zip|tar.gz`），详见 [reference/build.md](reference/build.md)。
 
 ## 约定
 
