@@ -42,11 +42,12 @@ jobs:
       matrix:
         include:
           # ubuntu-22.04 取 glibc 2.35 作为兼容基线，别换成 latest
+          # macos-14 已被 GitHub 下线（报 configuration not supported），用 latest 跟随可用的 arm64 镜像
           - os: windows-latest
             rid: win-x64
           - os: ubuntu-22.04
             rid: linux-x64
-          - os: macos-14
+          - os: macos-latest
             rid: osx-arm64
     runs-on: ${{ matrix.os }}
     env:
