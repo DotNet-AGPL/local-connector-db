@@ -1,7 +1,7 @@
 #Requires -Version 7.0
 <#
 .SYNOPSIS
-    构建 local-connector-db 的 .NET NativeAOT 制品。
+    构建 local-skill-tools 的 .NET NativeAOT 制品。
 
 .DESCRIPTION
     每个已迁移的数据库一个 exe，产物按 <db>-<rid> 目录封装：
@@ -22,14 +22,14 @@
 #>
 [CmdletBinding()]
 param(
-    [ValidateSet('sqlite', 'mysql', 'postgres', 'duckdb', 'clickhouse', 'redis', 'dm', 'mongo', 'sqlserver', 'oracle')]
+    [ValidateSet('sqlite', 'mysql', 'postgres', 'duckdb', 'clickhouse', 'redis', 'dm', 'mongo', 'sqlserver', 'oracle', 'ssh', 'sftp')]
     [string[]]$Only,
 
     # 目标 RID；省略时按宿主平台推断（Windows→win-x64、Linux→linux-x64、Apple Silicon→osx-arm64）
     [string]$Rid,
 
     # 跳过指定库（排查用），例如 -Skip sqlserver,dm
-    [ValidateSet('sqlite', 'mysql', 'postgres', 'duckdb', 'clickhouse', 'redis', 'dm', 'mongo', 'sqlserver', 'oracle')]
+    [ValidateSet('sqlite', 'mysql', 'postgres', 'duckdb', 'clickhouse', 'redis', 'dm', 'mongo', 'sqlserver', 'oracle', 'ssh', 'sftp')]
     [string[]]$Skip,
 
     [switch]$Clean
@@ -88,6 +88,8 @@ $targets = [ordered]@{
     mongo    = @{ Project = 'Connector.Mongo'; Exe = 'db-mongo' }
     sqlserver = @{ Project = 'Connector.SqlServer'; Exe = 'db-sqlserver' }
     oracle   = @{ Project = 'Connector.Oracle'; Exe = 'db-oracle' }
+    ssh      = @{ Project = 'Net.Ssh'; Exe = 'net-ssh' }
+    sftp     = @{ Project = 'Net.Sftp'; Exe = 'net-sftp' }
 }
 
 $names = if ($Only) { $Only } else { @($targets.Keys) }
@@ -135,7 +137,7 @@ foreach ($name in $names) {
     Get-ChildItem $outDir -Filter '*.pdb' -File | Remove-Item -Force -ErrorAction SilentlyContinue
 
     $lines = New-Object System.Collections.Generic.List[string]
-    $lines.Add('# local-connector-db build info')
+    $lines.Add('# local-skill-tools build info')
     $lines.Add(("library    : {0}" -f $name))
     $lines.Add(("rid        : {0}" -f $Rid))
     $lines.Add(("dotnet sdk : {0}" -f $sdk))

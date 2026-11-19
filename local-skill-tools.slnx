@@ -11,6 +11,12 @@
     <Project Path="src/Connector.Mongo/Connector.Mongo.csproj" />
     <Project Path="src/Connector.SqlServer/Connector.SqlServer.csproj" />
     <Project Path="src/Connector.Oracle/Connector.Oracle.csproj" />
+    <Project Path="src/Net.Core/Net.Core.csproj" />
+    <Project Path="src/Net.Ssh/Net.Ssh.csproj" />
+    <Project Path="src/Net.Sftp/Net.Sftp.csproj" />
+  </Folder>
+  <Folder Name="/tests/net/">
+    <File Path="tests/net/run.ps1" />
   </Folder>
   <Folder Name="/tests/clickhouse/">
     <File Path="tests/clickhouse/run.ps1" />

@@ -57,7 +57,7 @@ rebuild.bat verify all         # 只校验三平台
 源码在 `src/`，每个库一个项目：
 
 ```bash
-.\build.ps1 -Only <sqlite|mysql|postgres|duckdb|clickhouse|redis|dm|mongo|sqlserver|oracle>
+.\build.ps1 -Only <sqlite|mysql|postgres|duckdb|clickhouse|redis|dm|mongo|sqlserver|oracle|ssh|sftp>
 .\build.ps1 -Only mysql -Rid linux-x64 -Clean
 .\build.ps1 -Only sqlite -Rid osx-arm64
 .\build.ps1 -Skip sqlserver,dm        # 跳过指定库
@@ -75,7 +75,7 @@ rebuild.bat verify all         # 只校验三平台
 
 ## macOS 注意事项
 
-- `osx-arm64` 的 10 个制品已在 Windows 上交叉构建通过（2026-11-17，`.NET 11.0.100`）；尚未在 macOS 真机上运行验证
+- `osx-arm64` 的 12 个制品已在 Windows 上交叉构建通过（`.NET 11.0.100`）；尚未在 macOS 真机上运行验证
 - 从别的机器拷贝/下载的产物会带 quarantine 标记，首次运行前执行：
   `xattr -dr com.apple.quarantine bin/<db>-osx-arm64`
 - 不需要安装 Xcode：`MacOSX.SDK` 由 PublishAotCross 自动引入，仅提供链接所需的 SDK 子集

@@ -10,10 +10,10 @@
     <Version>1.0.0</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <Product>local-connector-db</Product>
+    <Product>local-skill-tools</Product>
     <AssemblyTitle>PostgreSQL connector</AssemblyTitle>
     <Description>PostgreSQL 查询 / 执行工具（NativeAOT）</Description>
-    <Company>local-connector-db</Company>
+    <Company>local-skill-tools</Company>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 

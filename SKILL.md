@@ -1,17 +1,19 @@
 ---
-name: local-connector-db
-description: 连接并操作 MySQL、PostgreSQL、SQLite、DuckDB、MongoDB、Redis、ClickHouse、Oracle、SQL Server、达梦数据库，执行查询、数据操作与库管理。当用户提供数据库连接串（mysql://、postgres://、mongodb://、redis://、clickhouse://、jdbc:、Server=...;Database=...）、host:port 或 .db/.sqlite/.sqlite3/.duckdb 文件路径，或要求连接数据库、执行 SQL、查询数据、修改数据、查看表结构时使用。
+name: local-skill-tools
+description: 用本地 NativeAOT 单文件工具操作数据库与远程服务器。数据库支持 MySQL、PostgreSQL、SQLite、DuckDB、MongoDB、Redis、ClickHouse、Oracle、SQL Server、达梦的查询与库管理；远程支持 SSH 执行命令与 SFTP 上传下载。当用户提供数据库连接串（mysql://、postgres://、mongodb://、redis://、clickhouse://、jdbc:、Server=...;Database=...）、host:port、.db/.sqlite/.duckdb 文件路径，或提供 user@host、私钥、SSH 连接信息并要求连库、执行 SQL、查看表结构、远程执行命令、上传下载文件时使用。
 ---
 
-# 数据库连接（local-connector-db）
+# 本地工具集（local-skill-tools）
 
-用 `bin/<db>-<rid>/` 下的单文件可执行程序直接连库：不需要安装运行时、驱动或包管理器。
+用 `bin/<tool>-<rid>/` 下的单文件可执行程序直接干活：不需要安装运行时、驱动或包管理器。
 
 ## 前置依赖
 
-全部数据库为 .NET NativeAOT 单文件制品，随 skill 分发，直接执行 `bin/` 下对应可执行文件即可：**无需安装依赖，也不需要 .NET 运行时**。
+全部工具为 .NET NativeAOT 单文件制品，随 skill 分发，直接执行 `bin/` 下对应可执行文件即可：**无需安装依赖，也不需要 .NET 运行时**。
 
-每个 `bin/<db>-<rid>/` 都是自包含目录，整目录拷贝即可运行。下表中的「额外文件」必须与可执行文件放在同一目录，不要单独删除。
+每个 `bin/<tool>-<rid>/` 都是自包含目录，整目录拷贝即可运行。下表中的「额外文件」必须与可执行文件放在同一目录，不要单独删除。
+
+### 数据库
 
 | 数据库 | Windows 入口 | Linux 入口 | macOS 入口 | Windows 额外文件 |
 |-------|-------------|-----------|-----------|-----------------|
@@ -25,6 +27,13 @@ description: 连接并操作 MySQL、PostgreSQL、SQLite、DuckDB、MongoDB、Re
 | Oracle | `bin/oracle-win-x64/db-oracle.exe` | `bin/oracle-linux-x64/db-oracle` | `bin/oracle-osx-arm64/db-oracle` | - |
 | SQL Server | `bin/sqlserver-win-x64/db-sqlserver.exe` | `bin/sqlserver-linux-x64/db-sqlserver` | `bin/sqlserver-osx-arm64/db-sqlserver` | `Microsoft.Data.SqlClient.SNI.dll` |
 | 达梦 | `bin/dm-win-x64/db-dm.exe` | `bin/dm-linux-x64/db-dm` | `bin/dm-osx-arm64/db-dm` | - |
+
+### 远程操作
+
+| 工具 | 用途 | Windows 入口 | Linux 入口 | macOS 入口 |
+|------|------|-------------|-----------|-----------|
+| `net-ssh` | 远程执行命令 | `bin/ssh-win-x64/net-ssh.exe` | `bin/ssh-linux-x64/net-ssh` | `bin/ssh-osx-arm64/net-ssh` |
+| `net-sftp` | 列目录 / 上传 / 下载 / 删除 | `bin/sftp-win-x64/net-sftp.exe` | `bin/sftp-linux-x64/net-sftp` | `bin/sftp-osx-arm64/net-sftp` |
 
 macOS 列对应 Apple Silicon（`osx-arm64`）：仓库不预置该平台制品，在 Mac 上首次使用前跑 `bash rebuild.sh`（按宿主自动选 RID）生成。该平台已在 Windows 上交叉构建通过，但尚未在 macOS 真机上运行验证。`sqlserver` 与 `dm` 在非 Windows 平台都走纯托管驱动，不需要额外原生库。
 
@@ -104,6 +113,26 @@ db-redis query localhost -p 6379 -c "GET mykey"
 
 子命令只有两个：`connect` 验证连通并给出库/表概况，`query` 执行并输出结果。两者参数一致，把 `query` 换成 `connect` 即可。
 
+### 远程操作（SSH / SFTP）
+
+```bash
+# 执行命令：-- 之后的参数原样送到远端，退出码与远端一致
+net-ssh exec root@10.0.2.74 -- 'systemctl status nginx'
+net-ssh exec root@10.0.2.74 -i ~/.ssh/id_ed25519 -f deploy.sh
+
+# 密码只从标准输入读，不要写在命令行里
+echo "$REMOTE_PASSWORD" | net-ssh exec root@10.0.2.74 --password-stdin -- 'df -h'
+
+# 上传 / 下载（目录加 -r）
+net-sftp put deploy@10.0.2.74 ./dist /opt/app/dist -r
+net-sftp get deploy@10.0.2.74 /var/log/app.log ./app.log
+net-sftp ls deploy@10.0.2.74 /opt/app -l
+net-sftp mkdir deploy@10.0.2.74 /opt/app/releases
+net-sftp rm deploy@10.0.2.74 /opt/app/old -r
+```
+
+主机密钥默认按 `~/.ssh/known_hosts` 校验；首次连接打印指纹后继续，`--strict` 要求必须已存在，`--insecure` 才完全跳过。
+
 ## 输出格式
 
 SQL 类数据库支持 `-o json|csv|table`（默认 JSON）；MongoDB 只有 `json` / `table`。
@@ -150,6 +179,7 @@ SQLite / DuckDB 的 `-f` 支持多条 DDL/DML，执行方式由**首关键字**�
 ## 参考
 
 - **完整参数格式**（每个库的 `query` / `connect` 签名、SQLite 专属选项、通用参数）：[reference/cli.md](reference/cli.md)
+- **SSH / SFTP**（认证、主机密钥校验、递归传输、常见错误）：[reference/net.md](reference/net.md)
 - **各库特性**（连接参数、类型映射、专有行为、已知限制）：[reference/databases.md](reference/databases.md)
 - **重新构建制品**（`bin/` 被误删时、三平台入口、SDK 与 ICU 策略）：[reference/build.md](reference/build.md)
 

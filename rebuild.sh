@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ============================================================
-#  local-connector-db 制品重建（bin 目录误删后跑这个）
+#  local-skill-tools 制品重建（bin 目录误删后跑这个）
 #
 #  用法：
 #    bash rebuild.sh               按宿主自动选 RID 重建
@@ -21,7 +21,10 @@ set -uo pipefail
 
 cd "$(dirname "$0")" || exit 1
 
-LIBS=(sqlite mysql postgres duckdb clickhouse redis dm mongo sqlserver oracle)
+# 工具表：<目录名前缀>:<可执行文件名>
+TOOLS=(sqlite:db-sqlite mysql:db-mysql postgres:db-postgres duckdb:db-duckdb
+       clickhouse:db-clickhouse redis:db-redis dm:db-dm mongo:db-mongo
+       sqlserver:db-sqlserver oracle:db-oracle ssh:net-ssh sftp:net-sftp)
 
 detect_host_rid() {
     local kernel machine
@@ -92,7 +95,7 @@ if [ "${#RIDS[@]}" -eq 0 ]; then
 fi
 
 echo "============================================"
-echo " local-connector-db 制品重建"
+echo " local-skill-tools 制品重建"
 echo "============================================"
 
 if [ "$MODE" = "build" ]; then
@@ -110,15 +113,16 @@ echo
 
 if [ "$MODE" = "build" ]; then
     for rid in "${RIDS[@]}"; do
-        for db in "${LIBS[@]}"; do
-            echo "==> 构建 ${db} (${rid})"
-            if ! pwsh -NoProfile -File build.ps1 -Only "$db" -Rid "$rid" -Clean; then
+        for entry in "${TOOLS[@]}"; do
+            tool="${entry%%:*}"
+            echo "==> 构建 ${tool} (${rid})"
+            if ! pwsh -NoProfile -File build.ps1 -Only "$tool" -Rid "$rid" -Clean; then
                 # 偶发文件锁（MSB4175 / file is being used by another process），重试一次
-                echo "[WARN] ${db} (${rid}) 首次失败，关闭编译服务后重试"
+                echo "[WARN] ${tool} (${rid}) 首次失败，关闭编译服务后重试"
                 dotnet build-server shutdown >/dev/null 2>&1 || true
                 sleep 3
-                if ! pwsh -NoProfile -File build.ps1 -Only "$db" -Rid "$rid" -Clean; then
-                    echo "[ERROR] ${db} (${rid}) 构建失败"
+                if ! pwsh -NoProfile -File build.ps1 -Only "$tool" -Rid "$rid" -Clean; then
+                    echo "[ERROR] ${tool} (${rid}) 构建失败"
                     exit 1
                 fi
             fi
@@ -134,21 +138,23 @@ echo "==> 校验产物"
 missing=0
 osx_hint=0
 
-for db in "${LIBS[@]}"; do
+for entry in "${TOOLS[@]}"; do
+    tool="${entry%%:*}"
+    exe="${entry##*:}"
     for rid in "${RIDS[@]}"; do
-        dir="bin/${db}-${rid}"
+        dir="bin/${tool}-${rid}"
 
-        if ! compgen -G "${dir}/db-${db}*" >/dev/null; then
+        if ! compgen -G "${dir}/${exe}*" >/dev/null; then
             echo "[MISS] ${dir} 缺少可执行文件"
             missing=1
             continue
         fi
 
         if [ "$rid" != "win-x64" ]; then
-            [ -x "${dir}/db-${db}" ] || echo "[WARN] ${dir}/db-${db} 没有执行权限（chmod +x 修）"
+            [ -x "${dir}/${exe}" ] || echo "[WARN] ${dir}/${exe} 没有执行权限（chmod +x 修）"
         fi
 
-        if [ "${db}-${rid}" = "sqlserver-linux-x64" ] && ! compgen -G "${dir}/*icu*" >/dev/null; then
+        if [ "${tool}-${rid}" = "sqlserver-linux-x64" ] && ! compgen -G "${dir}/*icu*" >/dev/null; then
             echo "[MISS] ${dir} 缺少 ICU 文件"
             missing=1
         fi
@@ -167,7 +173,7 @@ fi
 if [ "$osx_hint" = "1" ]; then
     echo
     echo "[i] macOS：从别的机器拷贝/下载的制品会带 quarantine 标记，首次运行前执行"
-    echo "    xattr -dr com.apple.quarantine bin/<db>-osx-arm64"
+    echo "    xattr -dr com.apple.quarantine bin/<tool>-osx-arm64"
 fi
 
 echo "[i] bin 总大小 : $(du -sm bin 2>/dev/null | cut -f1) MB"

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Net.Core</RootNamespace>
+    <AssemblyName>Net.Core</AssemblyName>
+    <IsAotCompatible>true</IsAotCompatible>
+    <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SSH.NET" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Connector.Core\Connector.Core.csproj" />
+  </ItemGroup>
+
+</Project>
