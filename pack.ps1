@@ -137,7 +137,7 @@ function Set-PackageModes {
 
     foreach ($dir in Get-ChildItem (Join-Path $PackageRoot 'bin') -Directory) {
         foreach ($file in Get-ChildItem $dir.FullName -File) {
-            if ($file.Name -match '^(db-|net-)') {
+            if ($file.Name -match '^(db-|net-|file-)') {
                 & chmod 755 $file.FullName
             }
             else {
