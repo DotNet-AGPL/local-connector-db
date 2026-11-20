@@ -13,7 +13,7 @@
     <PackageVersion Include="MySqlConnector" Version="3.0.0" />
     <PackageVersion Include="Npgsql" Version="10.0.3" />
     <PackageVersion Include="Oracle.ManagedDataAccess.Core" Version="23.26.400" />
-    <PackageVersion Include="PublishAotCross.Tools" Version="1.0.2.14" />
+    <PackageVersion Include="PublishAotCross.Tools" Version="1.0.3.14" />
     <PackageVersion Include="StackExchange.Redis" Version="3.4.35" />
     <PackageVersion Include="SSH.NET" Version="2026.0.1" />
     <PackageVersion Include="Wisdom.Office" Version="1.0.3" />
