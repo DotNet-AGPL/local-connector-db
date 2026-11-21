@@ -102,6 +102,22 @@ Linux 侧只有 `sqlserver-linux-x64/` 需要 `libicu*.so`（运行依赖，必�
 | 用户指定 `--type <db>` | 覆盖以上所有推断 |
 | 以上都不匹配（如只有主机名、没有端口） | 先问用户，不要猜 |
 
+**5. 13 个工具都不匹配时**
+
+| 条件 | 处理 |
+|---|---|
+| 客户机有 .NET SDK ≥ 10 正式版 | 写单文件 C#，用 NuGet 生态完成（见 [reference/dotnet.md](reference/dotnet.md)） |
+| 没有 SDK / 版本过低 | 如实说明现有工具覆盖不了；用户同意后可装最新正式版 SDK |
+
+### 能力边界
+
+| 档位 | 前提 | 覆盖 |
+|---|---|---|
+| 零依赖档 | 无 | 数据库、SSH/SFTP、文档读写与转换（13 个预编译工具） |
+| SDK 档 | .NET SDK ≥ 10 正式版 | 任意 NuGet 库、性能密集任务、单文件分发 |
+
+不覆盖：交互式 TTY、常驻服务、GUI / Office COM、抓包与内核态操作。
+
 ## 快速开始
 
 下列命令中的 `db-*` 指上表对应的可执行文件（Windows 为 `.exe`，PowerShell 调用需加 `&` 前缀）。命令行只接受纯主机名/IP：URL 或连接串里的协议、端口、用户名、密码要拆到 `-p` / `-u` / `--password` 等参数。
@@ -230,6 +246,7 @@ SQLite / DuckDB 的 `-f` 支持多条 DDL/DML，执行方式由**首关键字**�
 - **完整参数格式**（每个库的 `query` / `connect` 签名、SQLite 专属选项、通用参数）：[reference/cli.md](reference/cli.md)
 - **SSH / SFTP**（认证、主机密钥校验、递归传输、常见错误）：[reference/net.md](reference/net.md)
 - **文档办公**（Word / Excel / PPT / PDF / Markdown 的读写、转换与模板填充）：[reference/office.md](reference/office.md)
+- **单文件 C#**（工具覆盖不到时的 SDK 档扩展、AOT 与交叉编译）：[reference/dotnet.md](reference/dotnet.md)
 - **各库特性**（连接参数、类型映射、专有行为、已知限制）：[reference/databases.md](reference/databases.md)
 - **重新构建制品**（`bin/` 被误删时、三平台入口、SDK 与 ICU 策略）：[reference/build.md](reference/build.md)
 

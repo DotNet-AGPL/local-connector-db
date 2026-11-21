@@ -43,6 +43,7 @@ SKILL.md                    # Agent 入口：选库、快速开始、输出约�
 reference/cli.md            # 每个库的 query / connect 完整参数
 reference/net.md            # SSH / SFTP 认证、主机密钥、递归传输
 reference/office.md         # Word / Excel / PPT / PDF / Markdown 读写与转换
+reference/dotnet.md         # 单文件 C#：工具覆盖不到时的 SDK 档扩展
 reference/databases.md      # 各库连接参数、类型映射、专有行为
 reference/build.md          # 重建流程、RID 与 ICU 策略
 src/Connector.*/            # 每个数据库一个 .NET 项目
