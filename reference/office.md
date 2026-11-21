@@ -2,20 +2,22 @@
 
 `file-office` 以内置的 Wisdom.Office（MIT）实现 Office 文档读写，**不需要安装 Office / WPS / pandoc**。入口与其它工具同构：`bin/office-<rid>/file-office[.exe]`。
 
-## 支持矩阵
+## 支持的转换
 
-| 输入 \ 输出 | docx | xlsx | pptx | pdf | md |
-|---|---|---|---|---|---|
-| docx | ✅ | ✗ | ✅ | ✅ | ✅ |
-| xlsx | ✅ | ✅ | ✅ | ✅ | ✅ |
-| pptx | ✅（仅文本结构） | ✗ | ✅ | ✅ | ✅ |
-| pdf | ✅ | ✗ | ✅ | ✅ | ✅ |
-| md | ✅ | ✗ | ✅ | ✅ | ✅ |
-| doc / xls | ✗（只读） | ✗ | ✗ | ✗ | ✗ |
+以下组合均由 `tests/office/matrix.ps1` 实跑验证：
 
-- Word / PDF → Excel 不支持：文档模型里没有单元格地址，强行映射会丢语义
-- `.doc` / `.xls` 只能作为输入，且 `.xls` 只保留公式缓存值
-- PPT → Word 会退化成「一页一段文本」，只适合抽取内容
+| 输出 | 可用输入 | 说明 |
+|---|---|---|
+| **docx** | docx / xlsx / pdf / md | |
+| **docx** | pptx | 仅保留文本结构，版式与图表不保留 |
+| **pptx** | docx / xlsx / pptx / pdf / md | 按文档块映射成幻灯片，版式不保证 |
+| **pdf** | docx / xlsx / pptx / pdf / md | Excel 沿用打印设置，PPT 保留图片 |
+| **md** | docx / xlsx / pptx / pdf / md | 默认剥离内联 base64 图片 |
+| **xlsx** | xlsx | 仅电子表格；其它格式没有单元格模型 |
+
+补充：
+
+- `.doc` / `.xls`：库声明支持读取，但当前没有夹具验证，未列入矩阵
 
 ## 命令
 

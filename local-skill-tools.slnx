@@ -146,6 +146,7 @@
   </Folder>
   <Folder Name="/tests/office/">
     <File Path="tests/office/run.ps1" />
+    <File Path="tests/office/matrix.ps1" />
   </Folder>
   <Folder Name="/tests/office/fixtures/">
     <File Path="tests/office/fixtures/template.xlsx" />

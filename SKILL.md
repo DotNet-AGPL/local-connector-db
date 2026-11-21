@@ -170,7 +170,7 @@ file-office convert sales.xlsx out.pdf           # 按输出扩展名转换
 file-office fill    contract.docx vars.json -o out.docx   # 模板填充 {{key}} / {{#each}}
 ```
 
-限制：`.doc` / `.xls` 只读；Word / PDF 不能输出 xlsx；PPT → Word 只保留文本结构；PDF 中文依赖系统 TrueType 字体（Linux 容器需装 Noto）。详见 [reference/office.md](reference/office.md)。
+限制：PPT → Word 只保留文本结构；PDF 中文依赖系统 TrueType 字体（Linux 容器需装 Noto）。详见 [reference/office.md](reference/office.md)。
 
 ## 输出格式
 
